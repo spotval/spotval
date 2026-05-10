@@ -60,12 +60,7 @@
 
   .logo span { color: var(--green); }
 
-  nav ul {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
+  nav ul { list-style: none; display: flex; gap: 1rem; align-items: center; }
 
   nav ul a {
     color: var(--text-dim);
@@ -87,15 +82,8 @@
     transition: all 0.2s;
   }
 
-  .nav-trending:hover {
-    border-color: rgba(255,138,61,0.3);
-    color: var(--orange) !important;
-  }
-
-  .nav-trending::before {
-    content: '🔥';
-    font-size: 0.85rem;
-  }
+  .nav-trending:hover { border-color: rgba(255,138,61,0.3); color: var(--orange) !important; }
+  .nav-trending::before { content: '🔥'; font-size: 0.85rem; }
 
   .nav-cta {
     background: var(--green) !important;
@@ -105,15 +93,7 @@
     font-weight: 500 !important;
   }
 
-  .mobile-menu-btn {
-    display: none;
-    background: none;
-    border: none;
-    color: var(--text);
-    cursor: pointer;
-    padding: 0.5rem;
-  }
-
+  .mobile-menu-btn { display: none; background: none; border: none; color: var(--text); cursor: pointer; padding: 0.5rem; }
   .mobile-menu-btn svg { width: 24px; height: 24px; }
 
   /* HERO */
@@ -156,17 +136,9 @@
     text-transform: uppercase;
   }
 
-  .badge-dot {
-    width: 6px; height: 6px;
-    background: var(--green);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-  }
+  .badge-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
   h1 {
     font-family: 'Syne', sans-serif;
@@ -189,16 +161,25 @@
     line-height: 1.7;
   }
 
-  .scan-container {
+  /* SCAN STATE STACK */
+  .scan-stack {
     width: 100%;
     max-width: 680px;
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .scan-container, .scan-analyzing, .scan-result {
+    width: 100%;
     background: var(--bg2);
     border: 0.5px solid var(--border);
     border-radius: 16px;
     padding: 1.5rem;
-    margin-bottom: 1rem;
-    transition: border-color 0.3s;
+    transition: opacity 0.4s ease, transform 0.4s ease;
   }
+
+  .scan-state { display: none; }
+  .scan-state.active { display: block; animation: fadeUp 0.5s ease forwards; }
 
   .scan-container:focus-within { border-color: rgba(57,224,122,0.4); }
 
@@ -217,11 +198,7 @@
     flex: 1;
   }
 
-  .scan-tab.active {
-    background: rgba(57,224,122,0.12);
-    border-color: rgba(57,224,122,0.4);
-    color: var(--green);
-  }
+  .scan-tab.active { background: rgba(57,224,122,0.12); border-color: rgba(57,224,122,0.4); color: var(--green); }
 
   textarea {
     width: 100%;
@@ -257,12 +234,7 @@
     line-height: 1.5;
   }
 
-  .fb-notice svg {
-    flex-shrink: 0;
-    width: 14px;
-    height: 14px;
-    margin-top: 2px;
-  }
+  .fb-notice svg { flex-shrink: 0; width: 14px; height: 14px; margin-top: 2px; }
 
   .scan-footer {
     display: flex;
@@ -293,6 +265,375 @@
   }
 
   .scan-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ANALYZING STATE */
+  .scan-analyzing {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .radar-wrap {
+    width: 120px;
+    height: 120px;
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  .radar-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 0.5px solid rgba(57,224,122,0.3);
+  }
+
+  .radar-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--green);
+    animation: radarPulse 2s ease-out infinite;
+  }
+
+  .radar-pulse.delay { animation-delay: 1s; }
+
+  @keyframes radarPulse {
+    0% { transform: scale(0.3); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  .radar-core {
+    position: absolute;
+    inset: 35%;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(57,224,122,0.6);
+    animation: corePulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes corePulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+
+  .radar-sweep {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(57,224,122,0.4) 30deg, transparent 60deg);
+    animation: radarSweep 2s linear infinite;
+  }
+
+  @keyframes radarSweep {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .analyzing-status {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .analyzing-step {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    min-height: 1.5em;
+    transition: opacity 0.3s;
+  }
+
+  .analyzing-progress {
+    width: 100%;
+    max-width: 280px;
+    height: 2px;
+    background: var(--bg3);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+  }
+
+  .analyzing-progress-bar {
+    height: 100%;
+    background: var(--green);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  /* RESULT STATE */
+  .scan-result { padding: 2rem; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .result-listing {
+    text-align: left;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .result-listing-title {
+    font-size: 0.92rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+  }
+
+  .result-listing-meta {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .result-close {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    color: var(--text-dim);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .result-close:hover { color: var(--text); border-color: var(--border-hover); }
+
+  /* SCORE DISPLAY */
+  .score-display {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 1.5rem 0;
+    margin-bottom: 1.5rem;
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .score-ring-wrap {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    flex-shrink: 0;
+  }
+
+  .score-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .score-ring-bg {
+    fill: none;
+    stroke: var(--bg3);
+    stroke-width: 8;
+  }
+
+  .score-ring-fill {
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 377;
+    stroke-dashoffset: 377;
+    transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s;
+  }
+
+  .score-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--green);
+    letter-spacing: -2px;
+    transition: color 0.4s;
+  }
+
+  .score-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .score-info {
+    flex: 1;
+    text-align: left;
+    min-width: 220px;
+  }
+
+  .result-verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .result-verdict.show { opacity: 1; transform: translateY(0); }
+
+  .result-message {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  .result-message.show { opacity: 1; }
+
+  .result-confidence {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  .result-confidence.show { opacity: 1; }
+
+  .result-confidence::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+  }
+
+  /* RESULT ACTION CARD */
+  .result-action-card {
+    background: var(--bg3);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .result-action-card.show { opacity: 1; transform: translateY(0); }
+
+  .action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .action-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .action-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .action-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--border);
+  }
+
+  .offer-locked {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .offer-blur-result {
+    filter: blur(5px);
+    user-select: none;
+    color: var(--text-dim);
+  }
+
+  .upgrade-pill {
+    font-size: 0.7rem;
+    background: rgba(57,224,122,0.1);
+    color: var(--green);
+    border: 0.5px solid rgba(57,224,122,0.3);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  /* RESULT BUTTONS */
+  .result-actions {
+    display: flex;
+    gap: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+
+  .result-actions.show { opacity: 1; }
+
+  .result-btn {
+    flex: 1;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 0.5px solid var(--border);
+    background: var(--bg3);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .result-btn:hover { border-color: var(--border-hover); }
+  .result-btn.primary { background: var(--green); color: #000; border-color: transparent; }
+  .result-btn.primary:hover { opacity: 0.88; }
+  .result-btn svg { width: 14px; height: 14px; }
+
+  /* Verdict color variants */
+  .verdict-green { background: rgba(57,224,122,0.12); color: var(--green); }
+  .verdict-yellow { background: rgba(245,200,66,0.12); color: var(--yellow); }
+  .verdict-red { background: rgba(242,92,92,0.12); color: var(--red); }
 
   .platforms {
     display: flex;
@@ -357,17 +698,9 @@
     margin-bottom: 0.5rem;
   }
 
-  .trending-sub {
-    color: var(--text-dim);
-    font-size: 0.95rem;
-    max-width: 500px;
-  }
+  .trending-sub { color: var(--text-dim); font-size: 0.95rem; max-width: 500px; }
 
-  .trending-filters {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
+  .trending-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
 
   .filter-btn {
     background: none;
@@ -384,10 +717,7 @@
   .filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
   .filter-btn.active { background: rgba(57,224,122,0.12); border-color: rgba(57,224,122,0.4); color: var(--green); }
 
-  .trending-scroll-wrapper {
-    position: relative;
-    margin: 0 -1.5rem;
-  }
+  .trending-scroll-wrapper { position: relative; margin: 0 -1.5rem; }
 
   .trending-grid {
     display: flex;
@@ -417,10 +747,7 @@
     position: relative;
   }
 
-  .trend-card:hover {
-    border-color: rgba(255,138,61,0.3);
-    transform: translateY(-3px);
-  }
+  .trend-card:hover { border-color: rgba(255,138,61,0.3); transform: translateY(-3px); }
 
   .trend-rank {
     position: absolute;
@@ -449,87 +776,25 @@
     overflow: hidden;
   }
 
-  .trend-category {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.4rem;
-  }
+  .trend-category { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.4rem; }
+  .trend-name { font-weight: 500; font-size: 0.95rem; margin-bottom: 0.75rem; line-height: 1.3; }
+  .trend-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
 
-  .trend-name {
-    font-weight: 500;
-    font-size: 0.95rem;
-    margin-bottom: 0.75rem;
-    line-height: 1.3;
-  }
-
-  .trend-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .trend-stat {
-    background: var(--bg3);
-    border-radius: 8px;
-    padding: 0.6rem;
-  }
-
-  .trend-stat-label {
-    font-size: 0.68rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-  }
-
-  .trend-stat-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-  }
-
+  .trend-stat { background: var(--bg3); border-radius: 8px; padding: 0.6rem; }
+  .trend-stat-label { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+  .trend-stat-value { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; }
   .trend-stat-value.profit { color: var(--green); }
 
-  .trend-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 0.75rem;
-    border-top: 0.5px solid var(--border);
-  }
+  .trend-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 0.5px solid var(--border); }
 
-  .demand-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    color: var(--text-dim);
-  }
-
+  .demand-bar { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-dim); }
   .demand-dots { display: flex; gap: 2px; }
-
-  .demand-dot {
-    width: 5px;
-    height: 5px;
-    background: var(--bg3);
-    border-radius: 50%;
-  }
-
-  .demand-dot.active { background: var(--green); }
+  .demand-dot { width: 5px; height: 5px; background: var(--bg3); border-radius: 50%; }
   .demand-dot.medium { background: var(--yellow); }
   .demand-dot.high { background: var(--orange); }
+  .demand-dot.active { background: var(--green); }
 
-  .trend-arrow {
-    color: var(--text-muted);
-    font-size: 0.78rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
+  .trend-arrow { color: var(--text-muted); font-size: 0.78rem; display: flex; align-items: center; gap: 4px; }
   .trend-arrow.up { color: var(--green); }
 
   .trending-cta {
@@ -541,12 +806,7 @@
     border-radius: 14px;
   }
 
-  .trending-cta-text {
-    font-size: 0.95rem;
-    color: var(--text-dim);
-    margin-bottom: 1rem;
-  }
-
+  .trending-cta-text { font-size: 0.95rem; color: var(--text-dim); margin-bottom: 1rem; }
   .trending-cta-text strong { color: var(--orange); font-weight: 500; }
 
   .trending-upgrade {
@@ -612,9 +872,9 @@
     font-weight: 800;
   }
 
-  .score-great { background: rgba(57,224,122,0.12); color: var(--green); }
-  .score-fair { background: rgba(245,200,66,0.12); color: var(--yellow); }
-  .score-bad { background: rgba(242,92,92,0.12); color: var(--red); }
+  .score-great-bg { background: rgba(57,224,122,0.12); color: var(--green); }
+  .score-fair-bg { background: rgba(245,200,66,0.12); color: var(--yellow); }
+  .score-bad-bg { background: rgba(242,92,92,0.12); color: var(--red); }
 
   .card-verdict {
     display: inline-flex;
@@ -626,10 +886,6 @@
     border-radius: 6px;
     margin-bottom: 0.75rem;
   }
-
-  .verdict-great { background: rgba(57,224,122,0.1); color: var(--green); }
-  .verdict-fair { background: rgba(245,200,66,0.1); color: var(--yellow); }
-  .verdict-bad { background: rgba(242,92,92,0.1); color: var(--red); }
 
   .card-action { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem; }
   .card-divider { height: 0.5px; background: var(--border); margin: 1rem 0; }
@@ -731,13 +987,7 @@
   .plan-desc { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.5rem; }
   .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
 
-  .plan-features li {
-    font-size: 0.85rem;
-    color: var(--text-dim);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .plan-features li { font-size: 0.85rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
 
   .plan-features li::before {
     content: '';
@@ -791,26 +1041,23 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .hero > * { animation: fadeUp 0.6s ease forwards; opacity: 0; }
-  .hero > *:nth-child(1) { animation-delay: 0.1s; }
-  .hero > *:nth-child(2) { animation-delay: 0.2s; }
-  .hero > *:nth-child(3) { animation-delay: 0.3s; }
-  .hero > *:nth-child(4) { animation-delay: 0.4s; }
-  .hero > *:nth-child(5) { animation-delay: 0.5s; }
-  .hero > *:nth-child(6) { animation-delay: 0.6s; }
+  .hero-fade > * { animation: fadeUp 0.6s ease forwards; opacity: 0; }
+  .hero-fade > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero-fade > *:nth-child(2) { animation-delay: 0.2s; }
+  .hero-fade > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero-fade > *:nth-child(4) { animation-delay: 0.4s; }
+  .hero-fade > *:nth-child(5) { animation-delay: 0.5s; }
+  .hero-fade > *:nth-child(6) { animation-delay: 0.6s; }
 
   /* MOBILE */
   @media (max-width: 768px) {
     nav { padding: 0.85rem 1.25rem; }
-
     .desktop-nav { display: none; }
     .mobile-menu-btn { display: block; }
 
     .mobile-menu {
       position: fixed;
-      top: 60px;
-      left: 0;
-      right: 0;
+      top: 60px; left: 0; right: 0;
       background: rgba(10,10,10,0.98);
       backdrop-filter: blur(12px);
       border-bottom: 0.5px solid var(--border);
@@ -823,23 +1070,23 @@
     }
 
     .mobile-menu.open { transform: translateY(0); }
-
-    .mobile-menu li {
-      list-style: none;
-      padding: 0.75rem 0;
-      border-bottom: 0.5px solid var(--border);
-    }
-
+    .mobile-menu li { list-style: none; padding: 0.75rem 0; border-bottom: 0.5px solid var(--border); }
     .mobile-menu li:last-child { border-bottom: none; padding-top: 1rem; }
     .mobile-menu a { font-size: 0.95rem; display: block; }
     .mobile-menu .nav-cta { text-align: center; padding: 0.75rem 1.25rem !important; }
     .mobile-menu .nav-trending { text-align: center; padding: 0.75rem 1.25rem !important; justify-content: center; }
 
     .hero { padding: 6rem 1.25rem 3rem; }
-    .scan-container { padding: 1.25rem; }
+    .scan-container, .scan-analyzing, .scan-result { padding: 1.25rem; }
     .scan-footer { flex-direction: column; align-items: stretch; gap: 0.75rem; }
     .scan-hint { text-align: center; }
     .scan-btn { width: 100%; }
+
+    .score-display { gap: 1rem; padding: 1rem 0; }
+    .score-info { text-align: center; }
+    .result-actions { flex-direction: column; }
+    .result-action-card .action-row { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+    .action-divider { display: none; }
 
     .trending-header { flex-direction: column; align-items: flex-start; }
     .trend-card { flex: 0 0 250px; }
@@ -876,50 +1123,158 @@
 </nav>
 
 <section class="hero">
-  <div class="badge">
-    <div class="badge-dot"></div>
-    Smart-Powered Deal Scoring
-  </div>
-
-  <h1>Is it actually a<br><em>good deal?</em></h1>
-
-  <p class="hero-sub">Paste any listing from any platform. SpotVal analyzes it in seconds and tells you exactly what it is worth and what to do next.</p>
-
-  <div class="scan-container">
-    <div class="scan-tabs">
-      <button class="scan-tab active" onclick="switchTab(this,'url')">Paste URL</button>
-      <button class="scan-tab" onclick="switchTab(this,'text')">Paste listing text</button>
-    </div>
-    <textarea id="scan-input" placeholder="Paste a listing URL from eBay, Craigslist, OfferUp, Mercari..."></textarea>
-
-    <div class="fb-notice" id="fbNotice">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="12"/>
-        <line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-      <span id="fbNoticeText"><strong>Facebook Marketplace:</strong> URLs are not supported. Switch to "Paste listing text" and copy the title, price, and description directly.</span>
+  <div class="hero-fade" style="display:contents;">
+    <div class="badge">
+      <div class="badge-dot"></div>
+      Smart-Powered Deal Scoring
     </div>
 
-    <div class="scan-footer">
-      <span class="scan-hint">2 free scans per day — no account required</span>
-      <button class="scan-btn" onclick="handleScan()">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/>
-        </svg>
-        Scan listing
-      </button>
-    </div>
-  </div>
+    <h1>Is it actually a<br><em>good deal?</em></h1>
 
-  <div class="platforms">
-    <span class="platforms-label">Works on</span>
-    <span class="platform-pill">Facebook Marketplace</span>
-    <span class="platform-pill">eBay</span>
-    <span class="platform-pill">Craigslist</span>
-    <span class="platform-pill">OfferUp</span>
-    <span class="platform-pill">Mercari</span>
-    <span class="platform-pill">+ more</span>
+    <p class="hero-sub">Paste any listing from any platform. SpotVal analyzes it in seconds and tells you exactly what it is worth and what to do next.</p>
+
+    <div class="scan-stack">
+
+      <!-- INPUT STATE -->
+      <div class="scan-state active" id="state-input">
+        <div class="scan-container">
+          <div class="scan-tabs">
+            <button class="scan-tab active" onclick="switchTab(this,'url')">Paste URL</button>
+            <button class="scan-tab" onclick="switchTab(this,'text')">Paste listing text</button>
+          </div>
+          <textarea id="scan-input" placeholder="Paste a listing URL from eBay, Craigslist, OfferUp, Mercari..."></textarea>
+
+          <div class="fb-notice" id="fbNotice">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span id="fbNoticeText"><strong>Facebook Marketplace:</strong> URLs are not supported. Switch to "Paste listing text" and copy the title, price, and description directly.</span>
+          </div>
+
+          <div class="scan-footer">
+            <span class="scan-hint">2 free scans per day — no account required</span>
+            <button class="scan-btn" id="scanBtn" onclick="handleScan()">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/>
+              </svg>
+              Scan listing
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANALYZING STATE -->
+      <div class="scan-state" id="state-analyzing">
+        <div class="scan-analyzing">
+          <div class="radar-wrap">
+            <div class="radar-ring"></div>
+            <div class="radar-sweep"></div>
+            <div class="radar-pulse"></div>
+            <div class="radar-pulse delay"></div>
+            <div class="radar-core"></div>
+          </div>
+          <div class="analyzing-status">Analyzing listing...</div>
+          <div class="analyzing-step" id="analyzingStep">Reading listing details</div>
+          <div class="analyzing-progress">
+            <div class="analyzing-progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULT STATE -->
+      <div class="scan-state" id="state-result">
+        <div class="scan-result">
+          <div class="result-header">
+            <div class="result-listing">
+              <div class="result-listing-title" id="resultTitle">iPhone 13 Pro — 128GB — Good Condition</div>
+              <div class="result-listing-meta" id="resultMeta">Facebook Marketplace · Listed at $420</div>
+            </div>
+            <button class="result-close" onclick="resetScan()" aria-label="Close">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <line x1="1" y1="1" x2="13" y2="13"/>
+                <line x1="13" y1="1" x2="1" y2="13"/>
+              </svg>
+            </button>
+          </div>
+
+          <div class="score-display">
+            <div class="score-ring-wrap">
+              <svg class="score-ring" viewBox="0 0 140 140">
+                <circle class="score-ring-bg" cx="70" cy="70" r="60"/>
+                <circle class="score-ring-fill" id="scoreRingFill" cx="70" cy="70" r="60"/>
+              </svg>
+              <div class="score-text">
+                <div class="score-number" id="scoreNumber">0</div>
+                <div class="score-label">out of 100</div>
+              </div>
+            </div>
+
+            <div class="score-info">
+              <div class="result-verdict" id="resultVerdict">
+                <span id="verdictIcon">✓</span>
+                <span id="verdictText">Great Deal</span>
+              </div>
+              <div class="result-message" id="resultMessage">
+                Priced well below market average. Comparable items sold for $480 on eBay over the past 30 days. Strong buy signal.
+              </div>
+              <div class="result-confidence" id="resultConfidence">
+                High confidence · 2,400 comparable sales analyzed
+              </div>
+            </div>
+          </div>
+
+          <div class="result-action-card" id="resultActionCard">
+            <div class="action-row">
+              <div>
+                <div class="action-label">Recommendation</div>
+                <div class="action-value" id="recommendationText">Buy now</div>
+              </div>
+              <div class="action-divider"></div>
+              <div>
+                <div class="action-label">Suggested offer</div>
+                <div class="action-value">
+                  <div class="offer-locked">
+                    <span class="offer-blur-result">$385</span>
+                    <span class="upgrade-pill">Pro</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-actions" id="resultActions">
+            <button class="result-btn" onclick="resetScan()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5"/>
+              </svg>
+              Scan another
+            </button>
+            <button class="result-btn primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                <polyline points="16 6 12 2 8 6"/>
+                <line x1="12" y1="2" x2="12" y2="15"/>
+              </svg>
+              Share score
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="platforms">
+      <span class="platforms-label">Works on</span>
+      <span class="platform-pill">Facebook Marketplace</span>
+      <span class="platform-pill">eBay</span>
+      <span class="platform-pill">Craigslist</span>
+      <span class="platform-pill">OfferUp</span>
+      <span class="platform-pill">Mercari</span>
+      <span class="platform-pill">+ more</span>
+    </div>
   </div>
 </section>
 
@@ -948,25 +1303,12 @@
         <div class="trend-category">Apparel · Sneakers</div>
         <div class="trend-name">Air Jordan 4 Retro — Bred</div>
         <div class="trend-stats">
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Buy</div>
-            <div class="trend-stat-value">$185</div>
-          </div>
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Sell</div>
-            <div class="trend-stat-value profit">$340</div>
-          </div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Buy</div><div class="trend-stat-value">$185</div></div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Sell</div><div class="trend-stat-value profit">$340</div></div>
         </div>
         <div class="trend-footer">
-          <div class="demand-bar">
-            <span>Demand</span>
-            <div class="demand-dots">
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-            </div>
+          <div class="demand-bar"><span>Demand</span>
+            <div class="demand-dots"><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div></div>
           </div>
           <span class="trend-arrow up">↑ 24%</span>
         </div>
@@ -978,25 +1320,12 @@
         <div class="trend-category">Electronics · Phones</div>
         <div class="trend-name">iPhone 13 Pro — 128GB Unlocked</div>
         <div class="trend-stats">
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Buy</div>
-            <div class="trend-stat-value">$420</div>
-          </div>
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Sell</div>
-            <div class="trend-stat-value profit">$555</div>
-          </div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Buy</div><div class="trend-stat-value">$420</div></div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Sell</div><div class="trend-stat-value profit">$555</div></div>
         </div>
         <div class="trend-footer">
-          <div class="demand-bar">
-            <span>Demand</span>
-            <div class="demand-dots">
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot"></div>
-            </div>
+          <div class="demand-bar"><span>Demand</span>
+            <div class="demand-dots"><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot"></div></div>
           </div>
           <span class="trend-arrow up">↑ 18%</span>
         </div>
@@ -1008,25 +1337,12 @@
         <div class="trend-category">Furniture · Mid-Century</div>
         <div class="trend-name">West Elm Andes Sectional Sofa</div>
         <div class="trend-stats">
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Buy</div>
-            <div class="trend-stat-value">$650</div>
-          </div>
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Sell</div>
-            <div class="trend-stat-value profit">$1,200</div>
-          </div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Buy</div><div class="trend-stat-value">$650</div></div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Sell</div><div class="trend-stat-value profit">$1,200</div></div>
         </div>
         <div class="trend-footer">
-          <div class="demand-bar">
-            <span>Demand</span>
-            <div class="demand-dots">
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot"></div>
-            </div>
+          <div class="demand-bar"><span>Demand</span>
+            <div class="demand-dots"><div class="demand-dot medium"></div><div class="demand-dot medium"></div><div class="demand-dot medium"></div><div class="demand-dot medium"></div><div class="demand-dot"></div></div>
           </div>
           <span class="trend-arrow up">↑ 31%</span>
         </div>
@@ -1038,25 +1354,12 @@
         <div class="trend-category">Electronics · Gaming</div>
         <div class="trend-name">PS5 Disc Edition — Used Good</div>
         <div class="trend-stats">
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Buy</div>
-            <div class="trend-stat-value">$320</div>
-          </div>
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Sell</div>
-            <div class="trend-stat-value profit">$425</div>
-          </div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Buy</div><div class="trend-stat-value">$320</div></div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Sell</div><div class="trend-stat-value profit">$425</div></div>
         </div>
         <div class="trend-footer">
-          <div class="demand-bar">
-            <span>Demand</span>
-            <div class="demand-dots">
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-            </div>
+          <div class="demand-bar"><span>Demand</span>
+            <div class="demand-dots"><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div></div>
           </div>
           <span class="trend-arrow up">↑ 12%</span>
         </div>
@@ -1068,25 +1371,12 @@
         <div class="trend-category">Collectibles · Trading Cards</div>
         <div class="trend-name">Pokemon Booster Boxes — Sealed</div>
         <div class="trend-stats">
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Buy</div>
-            <div class="trend-stat-value">$135</div>
-          </div>
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Sell</div>
-            <div class="trend-stat-value profit">$245</div>
-          </div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Buy</div><div class="trend-stat-value">$135</div></div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Sell</div><div class="trend-stat-value profit">$245</div></div>
         </div>
         <div class="trend-footer">
-          <div class="demand-bar">
-            <span>Demand</span>
-            <div class="demand-dots">
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot"></div>
-            </div>
+          <div class="demand-bar"><span>Demand</span>
+            <div class="demand-dots"><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot"></div></div>
           </div>
           <span class="trend-arrow up">↑ 28%</span>
         </div>
@@ -1098,25 +1388,12 @@
         <div class="trend-category">Apparel · Designer Bags</div>
         <div class="trend-name">Coach Tabby Shoulder Bag 26</div>
         <div class="trend-stats">
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Buy</div>
-            <div class="trend-stat-value">$180</div>
-          </div>
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Sell</div>
-            <div class="trend-stat-value profit">$285</div>
-          </div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Buy</div><div class="trend-stat-value">$180</div></div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Sell</div><div class="trend-stat-value profit">$285</div></div>
         </div>
         <div class="trend-footer">
-          <div class="demand-bar">
-            <span>Demand</span>
-            <div class="demand-dots">
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot"></div>
-              <div class="demand-dot"></div>
-            </div>
+          <div class="demand-bar"><span>Demand</span>
+            <div class="demand-dots"><div class="demand-dot medium"></div><div class="demand-dot medium"></div><div class="demand-dot medium"></div><div class="demand-dot"></div><div class="demand-dot"></div></div>
           </div>
           <span class="trend-arrow up">↑ 9%</span>
         </div>
@@ -1128,25 +1405,12 @@
         <div class="trend-category">Electronics · Laptops</div>
         <div class="trend-name">MacBook Air M2 — 256GB</div>
         <div class="trend-stats">
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Buy</div>
-            <div class="trend-stat-value">$720</div>
-          </div>
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Sell</div>
-            <div class="trend-stat-value profit">$895</div>
-          </div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Buy</div><div class="trend-stat-value">$720</div></div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Sell</div><div class="trend-stat-value profit">$895</div></div>
         </div>
         <div class="trend-footer">
-          <div class="demand-bar">
-            <span>Demand</span>
-            <div class="demand-dots">
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot active high"></div>
-              <div class="demand-dot"></div>
-            </div>
+          <div class="demand-bar"><span>Demand</span>
+            <div class="demand-dots"><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot active"></div><div class="demand-dot"></div></div>
           </div>
           <span class="trend-arrow up">↑ 15%</span>
         </div>
@@ -1158,25 +1422,12 @@
         <div class="trend-category">Furniture · Vintage</div>
         <div class="trend-name">Eames Lounge Chair Replica</div>
         <div class="trend-stats">
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Buy</div>
-            <div class="trend-stat-value">$400</div>
-          </div>
-          <div class="trend-stat">
-            <div class="trend-stat-label">Avg Sell</div>
-            <div class="trend-stat-value profit">$680</div>
-          </div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Buy</div><div class="trend-stat-value">$400</div></div>
+          <div class="trend-stat"><div class="trend-stat-label">Avg Sell</div><div class="trend-stat-value profit">$680</div></div>
         </div>
         <div class="trend-footer">
-          <div class="demand-bar">
-            <span>Demand</span>
-            <div class="demand-dots">
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot active medium"></div>
-              <div class="demand-dot"></div>
-            </div>
+          <div class="demand-bar"><span>Demand</span>
+            <div class="demand-dots"><div class="demand-dot medium"></div><div class="demand-dot medium"></div><div class="demand-dot medium"></div><div class="demand-dot medium"></div><div class="demand-dot"></div></div>
           </div>
           <span class="trend-arrow up">↑ 22%</span>
         </div>
@@ -1202,9 +1453,9 @@
           <div class="card-item">iPhone 13 Pro — 128GB — Good Condition</div>
           <div class="card-platform">Facebook Marketplace · $420</div>
         </div>
-        <div class="score-badge score-great">82</div>
+        <div class="score-badge score-great-bg">82</div>
       </div>
-      <div class="card-verdict verdict-great">✓ Great Deal</div>
+      <div class="card-verdict verdict-green">✓ Great Deal</div>
       <div class="card-action">Market average is $480. This is priced well below comparable sold listings.</div>
       <div class="card-divider"></div>
       <div class="card-offer">
@@ -1219,9 +1470,9 @@
           <div class="card-item">IKEA MALM Bed Frame — Queen — Like New</div>
           <div class="card-platform">Craigslist · $180</div>
         </div>
-        <div class="score-badge score-fair">61</div>
+        <div class="score-badge score-fair-bg">61</div>
       </div>
-      <div class="card-verdict verdict-fair">~ Fair Deal</div>
+      <div class="card-verdict verdict-yellow">~ Fair Deal</div>
       <div class="card-action">Retail is $299. Secondhand pricing is reasonable but room to negotiate.</div>
       <div class="card-divider"></div>
       <div class="card-offer">
@@ -1236,9 +1487,9 @@
           <div class="card-item">2015 MacBook Pro 13" — 8GB RAM</div>
           <div class="card-platform">OfferUp · $750</div>
         </div>
-        <div class="score-badge score-bad">24</div>
+        <div class="score-badge score-bad-bg">24</div>
       </div>
-      <div class="card-verdict verdict-bad">✕ Overpriced</div>
+      <div class="card-verdict verdict-red">✕ Overpriced</div>
       <div class="card-action">Comparable models sell for $280–$340. This listing is significantly overpriced.</div>
       <div class="card-divider"></div>
       <div class="card-offer">
@@ -1353,9 +1604,37 @@
     text: '<strong>Facebook Marketplace tip:</strong> Copy the entire listing — title, asking price, condition, and description — for the most accurate deal score.'
   };
 
+  // Mock scenarios for demo — will be replaced by Claude API responses later
+  const mockResults = [
+    {
+      score: 82, color: '#39e07a', verdict: 'Great Deal', verdictClass: 'verdict-green', verdictIcon: '✓',
+      title: 'iPhone 13 Pro — 128GB — Good Condition', meta: 'Facebook Marketplace · Listed at $420',
+      message: 'Priced well below market average. Comparable items sold for $480 on eBay over the past 30 days. Strong buy signal.',
+      confidence: 'High confidence · 2,400 comparable sales analyzed',
+      recommendation: 'Buy now', offer: '$385'
+    },
+    {
+      score: 61, color: '#f5c842', verdict: 'Fair Deal', verdictClass: 'verdict-yellow', verdictIcon: '~',
+      title: 'IKEA MALM Bed Frame — Queen', meta: 'Craigslist · Listed at $180',
+      message: 'Retail is $299. Secondhand pricing is reasonable but there is room to negotiate before pulling the trigger.',
+      confidence: 'Medium confidence · 340 comparable sales analyzed',
+      recommendation: 'Negotiate', offer: '$145'
+    },
+    {
+      score: 24, color: '#f25c5c', verdict: 'Overpriced', verdictClass: 'verdict-red', verdictIcon: '✕',
+      title: '2015 MacBook Pro 13" — 8GB RAM', meta: 'OfferUp · Listed at $750',
+      message: 'Comparable models sell for $280 to $340. This listing is significantly overpriced and likely will not sell at this rate.',
+      confidence: 'High confidence · 1,800 comparable sales analyzed',
+      recommendation: 'Pass or lowball', offer: '$310'
+    }
+  ];
+
+  let currentTab = 'url';
+
   function switchTab(btn, type) {
     document.querySelectorAll('.scan-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
+    currentTab = type;
     const input = document.getElementById('scan-input');
     input.placeholder = placeholders[type];
     input.value = '';
@@ -1363,7 +1642,12 @@
     input.focus();
   }
 
-  function handleScan() {
+  function showState(stateId) {
+    document.querySelectorAll('.scan-state').forEach(s => s.classList.remove('active'));
+    document.getElementById(stateId).classList.add('active');
+  }
+
+  async function handleScan() {
     const input = document.getElementById('scan-input');
     if (!input.value.trim()) {
       input.focus();
@@ -1371,17 +1655,100 @@
       setTimeout(() => { input.style.borderColor = ''; }, 1500);
       return;
     }
-    const btn = document.querySelector('.scan-btn');
-    btn.innerHTML = 'Analyzing...';
-    btn.style.opacity = '0.7';
-    btn.disabled = true;
-    setTimeout(() => {
-      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg> Scan listing';
-      btn.style.opacity = '';
-      btn.disabled = false;
-      alert('Scoring engine coming next session!');
-    }, 2000);
+
+    // Move to analyzing state
+    showState('state-analyzing');
+
+    // Run analyzing animation
+    const steps = [
+      'Reading listing details',
+      'Pulling comparable sales data',
+      'Analyzing market conditions',
+      'Calculating deal score'
+    ];
+
+    const progressBar = document.getElementById('progressBar');
+    const stepEl = document.getElementById('analyzingStep');
+
+    for (let i = 0; i < steps.length; i++) {
+      stepEl.style.opacity = '0';
+      await wait(200);
+      stepEl.textContent = steps[i];
+      stepEl.style.opacity = '1';
+      progressBar.style.width = `${((i + 1) / steps.length) * 100}%`;
+      await wait(700);
+    }
+
+    // Show results
+    showResults();
   }
+
+  function showResults() {
+    // Pick a random mock for demo variety
+    const result = mockResults[Math.floor(Math.random() * mockResults.length)];
+
+    // Update content
+    document.getElementById('resultTitle').textContent = result.title;
+    document.getElementById('resultMeta').textContent = result.meta;
+    document.getElementById('resultMessage').textContent = result.message;
+    document.getElementById('resultConfidence').textContent = result.confidence;
+    document.getElementById('recommendationText').textContent = result.recommendation;
+
+    const verdictEl = document.getElementById('resultVerdict');
+    verdictEl.className = 'result-verdict ' + result.verdictClass;
+    document.getElementById('verdictIcon').textContent = result.verdictIcon;
+    document.getElementById('verdictText').textContent = result.verdict;
+
+    // Reset score animation
+    const ring = document.getElementById('scoreRingFill');
+    const num = document.getElementById('scoreNumber');
+    ring.style.transition = 'none';
+    ring.style.strokeDashoffset = '377';
+    ring.style.stroke = result.color;
+    num.style.color = result.color;
+    num.textContent = '0';
+
+    showState('state-result');
+
+    // Animate score
+    setTimeout(() => {
+      ring.style.transition = 'stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
+      const targetOffset = 377 - (377 * result.score / 100);
+      ring.style.strokeDashoffset = targetOffset;
+      animateCounter(num, 0, result.score, 1800);
+    }, 100);
+
+    // Stagger reveal of verdict, message, confidence
+    setTimeout(() => { document.getElementById('resultVerdict').classList.add('show'); }, 1400);
+    setTimeout(() => { document.getElementById('resultMessage').classList.add('show'); }, 1700);
+    setTimeout(() => { document.getElementById('resultConfidence').classList.add('show'); }, 1900);
+    setTimeout(() => { document.getElementById('resultActionCard').classList.add('show'); }, 2100);
+    setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2300);
+  }
+
+  function resetScan() {
+    document.querySelectorAll('.result-verdict, .result-message, .result-confidence, .result-action-card, .result-actions').forEach(el => el.classList.remove('show'));
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('scan-input').value = '';
+    showState('state-input');
+    document.getElementById('scan-input').focus();
+  }
+
+  function animateCounter(element, start, end, duration) {
+    const startTime = performance.now();
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.floor(start + (end - start) * eased);
+      element.textContent = value;
+      if (progress < 1) requestAnimationFrame(update);
+      else element.textContent = end;
+    }
+    requestAnimationFrame(update);
+  }
+
+  function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
 
   function toggleMenu() {
     document.getElementById('mobileMenu').classList.toggle('open');
