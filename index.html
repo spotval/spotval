@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spotval — Spot the Value</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #39e07a;
+    --yellow: #f5c842;
+    --red: #f25c5c;
+    --bg: #0a0a0a;
+    --bg2: #111111;
+    --bg3: #1a1a1a;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.18);
+    --text: #f0f0f0;
+    --text-dim: #888;
+    --text-muted: #555;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 2.5rem;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .logo span { color: var(--green); }
+
+  nav ul { list-style: none; display: flex; gap: 2rem; align-items: center; }
+
+  nav ul a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+
+  nav ul a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: var(--green) !important;
+    color: #000 !important;
+    padding: 0.5rem 1.25rem !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+  }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(57,224,122,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(57,224,122,0.1);
+    border: 0.5px solid rgba(57,224,122,0.3);
+    color: var(--green);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0.35rem 0.9rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 1.5rem;
+    max-width: 800px;
+  }
+
+  h1 em { font-style: normal; color: var(--green); }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 480px;
+    margin-bottom: 3rem;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .scan-container {
+    width: 100%;
+    max-width: 680px;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  .scan-container:focus-within { border-color: rgba(57,224,122,0.4); }
+
+  .scan-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+
+  .scan-tab {
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .scan-tab.active {
+    background: rgba(57,224,122,0.12);
+    border-color: rgba(57,224,122,0.4);
+    color: var(--green);
+  }
+
+  textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 1rem;
+    resize: none;
+    height: 120px;
+    line-height: 1.6;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  textarea::placeholder { color: var(--text-muted); }
+  textarea:focus { border-color: rgba(57,224,122,0.3); }
+
+  .scan-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+
+  .scan-hint { font-size: 0.78rem; color: var(--text-muted); }
+
+  .scan-btn {
+    background: var(--green);
+    color: #000;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scan-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+  .scan-btn:active { transform: translateY(0); }
+
+  .platforms {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+
+  .platforms-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .platform-pill {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+  }
+
+  .examples { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    letter-spacing: -1px;
+  }
+
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+
+  .score-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .score-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; gap: 1rem; }
+
+  .card-item { font-weight: 500; font-size: 0.95rem; line-height: 1.4; }
+  .card-platform { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+  .score-badge {
+    flex-shrink: 0;
+    width: 52px; height: 52px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+
+  .score-great { background: rgba(57,224,122,0.12); color: var(--green); }
+  .score-fair { background: rgba(245,200,66,0.12); color: var(--yellow); }
+  .score-bad { background: rgba(242,92,92,0.12); color: var(--red); }
+
+  .card-verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+  }
+
+  .verdict-great { background: rgba(57,224,122,0.1); color: var(--green); }
+  .verdict-fair { background: rgba(245,200,66,0.1); color: var(--yellow); }
+  .verdict-bad { background: rgba(242,92,92,0.1); color: var(--red); }
+
+  .card-action { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem; }
+
+  .card-divider { height: 0.5px; background: var(--border); margin: 1rem 0; }
+
+  .card-offer { display: flex; align-items: center; justify-content: space-between; }
+
+  .offer-label { font-size: 0.78rem; color: var(--text-muted); }
+  .offer-price { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--green); }
+  .offer-blur { filter: blur(5px); user-select: none; color: var(--text-dim); font-size: 0.85rem; }
+
+  .upgrade-tag {
+    font-size: 0.72rem;
+    background: rgba(57,224,122,0.1);
+    color: var(--green);
+    border: 0.5px solid rgba(57,224,122,0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .how { padding: 5rem 2rem; max-width: 900px; margin: 0 auto; }
+
+  .steps { display: flex; flex-direction: column; gap: 0; margin-top: 3rem; position: relative; }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 20px; top: 0; bottom: 0;
+    width: 0.5px;
+    background: var(--border);
+  }
+
+  .step { display: flex; gap: 1.5rem; padding: 0 0 2.5rem 0; position: relative; }
+
+  .step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--green);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-content h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 0.35rem;
+    padding-top: 0.5rem;
+  }
+
+  .step-content p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
+
+  .pricing { padding: 5rem 2rem; max-width: 1000px; margin: 0 auto; }
+
+  .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 3rem; }
+
+  .pricing-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .pricing-card.featured { border-color: rgba(57,224,122,0.4); }
+
+  .featured-tag {
+    position: absolute;
+    top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: #000;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.25rem 0.9rem;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .plan-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+
+  .plan-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 0.25rem;
+  }
+
+  .plan-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); letter-spacing: 0; }
+
+  .plan-desc { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+
+  .plan-features li {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .plan-features li::before {
+    content: '';
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: rgba(57,224,122,0.15);
+    border: 0.5px solid rgba(57,224,122,0.4);
+    flex-shrink: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='8' height='6' viewBox='0 0 8 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3L3 5L7 1' stroke='%2339e07a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .plan-btn {
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 0.5px solid var(--border);
+    background: var(--bg3);
+    color: var(--text);
+  }
+
+  .plan-btn:hover { border-color: var(--border-hover); }
+  .plan-btn.primary { background: var(--green); color: #000; border-color: transparent; }
+  .plan-btn.primary:hover { opacity: 0.88; }
+
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
+  .footer-logo span { color: var(--green); }
+
+  .footer-links { display: flex; gap: 1.5rem; }
+
+  .footer-links a { font-size: 0.82rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--text); }
+
+  .footer-copy { font-size: 0.78rem; color: var(--text-muted); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero > * { animation: fadeUp 0.6s ease forwards; opacity: 0; }
+  .hero > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero > *:nth-child(2) { animation-delay: 0.2s; }
+  .hero > *:nth-child(3) { animation-delay: 0.3s; }
+  .hero > *:nth-child(4) { animation-delay: 0.4s; }
+  .hero > *:nth-child(5) { animation-delay: 0.5s; }
+  .hero > *:nth-child(6) { animation-delay: 0.6s; }
+
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.25rem; }
+    nav ul { gap: 1rem; }
+    .scan-footer { flex-direction: column; align-items: stretch; }
+    .scan-btn { justify-content: center; }
+    footer { flex-direction: column; text-align: center; }
+    .footer-links { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Spot<span>val</span></a>
+  <ul>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#pricing" class="nav-cta">Get started</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="badge">
+    <div class="badge-dot"></div>
+    AI-powered deal scoring
+  </div>
+
+  <h1>Is it actually a<br><em>good deal?</em></h1>
+
+  <p class="hero-sub">Paste any listing from any platform. Spotval analyzes it in seconds and tells you exactly what it is worth and what to do next.</p>
+
+  <div class="scan-container">
+    <div class="scan-tabs">
+      <button class="scan-tab active" onclick="switchTab(this,'url')">Paste URL</button>
+      <button class="scan-tab" onclick="switchTab(this,'text')">Paste listing text</button>
+    </div>
+    <textarea id="scan-input" placeholder="Paste a listing URL from eBay, Craigslist, OfferUp, Mercari..."></textarea>
+    <div class="scan-footer">
+      <span class="scan-hint">2 free scans per day — no account required</span>
+      <button class="scan-btn" onclick="handleScan()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/>
+        </svg>
+        Scan listing
+      </button>
+    </div>
+  </div>
+
+  <div class="platforms">
+    <span class="platforms-label">Works on</span>
+    <span class="platform-pill">Facebook Marketplace</span>
+    <span class="platform-pill">eBay</span>
+    <span class="platform-pill">Craigslist</span>
+    <span class="platform-pill">OfferUp</span>
+    <span class="platform-pill">Mercari</span>
+    <span class="platform-pill">+ more</span>
+  </div>
+</section>
+
+<section class="examples" id="examples">
+  <p class="section-label">Real examples</p>
+  <h2 class="section-title">See Spotval in action</h2>
+  <div class="cards-grid">
+
+    <div class="score-card">
+      <div class="card-header">
+        <div>
+          <div class="card-item">iPhone 13 Pro — 128GB — Good Condition</div>
+          <div class="card-platform">Facebook Marketplace · $420</div>
+        </div>
+        <div class="score-badge score-great">82</div>
+      </div>
+      <div class="card-verdict verdict-great">✓ Great Deal</div>
+      <div class="card-action">Market average is $480. This is priced well below comparable sold listings.</div>
+      <div class="card-divider"></div>
+      <div class="card-offer">
+        <span class="offer-label">Suggested offer</span>
+        <span class="offer-price">$385</span>
+      </div>
+    </div>
+
+    <div class="score-card">
+      <div class="card-header">
+        <div>
+          <div class="card-item">IKEA MALM Bed Frame — Queen — Like New</div>
+          <div class="card-platform">Craigslist · $180</div>
+        </div>
+        <div class="score-badge score-fair">61</div>
+      </div>
+      <div class="card-verdict verdict-fair">~ Fair Deal</div>
+      <div class="card-action">Retail is $299. Secondhand pricing is reasonable but room to negotiate.</div>
+      <div class="card-divider"></div>
+      <div class="card-offer">
+        <span class="offer-label">Suggested offer</span>
+        <span class="offer-price">$145</span>
+      </div>
+    </div>
+
+    <div class="score-card">
+      <div class="card-header">
+        <div>
+          <div class="card-item">2015 MacBook Pro 13" — 8GB RAM</div>
+          <div class="card-platform">OfferUp · $750</div>
+        </div>
+        <div class="score-badge score-bad">24</div>
+      </div>
+      <div class="card-verdict verdict-bad">✕ Overpriced</div>
+      <div class="card-action">Comparable models sell for $280–$340. This listing is significantly overpriced.</div>
+      <div class="card-divider"></div>
+      <div class="card-offer">
+        <span class="offer-label">Suggested offer</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="offer-blur">$310</span>
+          <span class="upgrade-tag">Pro</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="how" id="how">
+  <p class="section-label">How it works</p>
+  <h2 class="section-title">From listing to decision<br>in seconds</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Paste any listing</h3>
+        <p>Drop in a URL or copy the listing text directly. Spotval works with every major platform — no account or extension needed to start.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>AI analyzes the market</h3>
+        <p>Spotval pulls real sold listing data and runs it through AI to compare the price, condition, and demand against thousands of comparable sales.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Get your score and action</h3>
+        <p>Receive a deal score out of 100, a clear verdict, and a recommended action — buy, negotiate, or pass. Pro users also get a suggested offer price and negotiation message.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <p class="section-label">Pricing</p>
+  <h2 class="section-title">Simple, honest pricing</h2>
+  <div class="pricing-grid">
+
+    <div class="pricing-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">$0<span>/month</span></div>
+      <div class="plan-desc">Perfect for occasional buyers</div>
+      <ul class="plan-features">
+        <li>2 scans per day</li>
+        <li>Deal score out of 100</li>
+        <li>Verdict and recommended action</li>
+        <li>Works on all platforms</li>
+      </ul>
+      <button class="plan-btn">Get started free</button>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="featured-tag">Most popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price">$9<span>/month</span></div>
+      <div class="plan-desc">For serious buyers and casual flippers</div>
+      <ul class="plan-features">
+        <li>Unlimited scans</li>
+        <li>Suggested offer price</li>
+        <li>Negotiation message generator</li>
+        <li>Scan history saved</li>
+        <li>High confidence scoring</li>
+      </ul>
+      <button class="plan-btn primary">Start 7-day free trial</button>
+    </div>
+
+    <div class="pricing-card">
+      <div class="plan-name">Flipper</div>
+      <div class="plan-price">$29<span>/month</span></div>
+      <div class="plan-desc">For resellers who mean business</div>
+      <ul class="plan-features">
+        <li>Everything in Pro</li>
+        <li>Trending items dashboard</li>
+        <li>Bulk listing scanner</li>
+        <li>Profit margin estimates</li>
+        <li>Seasonal price alerts</li>
+        <li>Best platform recommendations</li>
+      </ul>
+      <button class="plan-btn">Get Flipper</button>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Spot<span>val</span></div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Support</a>
+  </div>
+  <div class="footer-copy">© 2026 Spotval. All rights reserved.</div>
+</footer>
+
+<script>
+  const placeholders = {
+    url: "Paste a listing URL from eBay, Craigslist, OfferUp, Mercari...",
+    text: "Paste the listing title, price, condition, and description here..."
+  };
+
+  function switchTab(btn, type) {
+    document.querySelectorAll('.scan-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const input = document.getElementById('scan-input');
+    input.placeholder = placeholders[type];
+    input.value = '';
+    input.focus();
+  }
+
+  function handleScan() {
+    const input = document.getElementById('scan-input');
+    if (!input.value.trim()) {
+      input.focus();
+      input.style.borderColor = 'rgba(242,92,92,0.5)';
+      setTimeout(() => { input.style.borderColor = ''; }, 1500);
+      return;
+    }
+    const btn = document.querySelector('.scan-btn');
+    btn.innerHTML = 'Analyzing...';
+    btn.style.opacity = '0.7';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg> Scan listing';
+      btn.style.opacity = '';
+      btn.disabled = false;
+      alert('AI scoring engine coming next session!');
+    }, 2000);
+  }
+</script>
+
+</body>
+</html>
