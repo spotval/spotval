@@ -12,6 +12,7 @@
     --green: #39e07a;
     --yellow: #f5c842;
     --red: #f25c5c;
+    --orange: #ff8a3d;
     --bg: #0a0a0a;
     --bg2: #111111;
     --bg3: #1a1a1a;
@@ -62,7 +63,7 @@
   nav ul {
     list-style: none;
     display: flex;
-    gap: 1.5rem;
+    gap: 1rem;
     align-items: center;
   }
 
@@ -76,6 +77,26 @@
 
   nav ul a:hover { color: var(--text); }
 
+  .nav-trending {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 0.5px solid var(--border);
+    transition: all 0.2s;
+  }
+
+  .nav-trending:hover {
+    border-color: rgba(255,138,61,0.3);
+    color: var(--orange) !important;
+  }
+
+  .nav-trending::before {
+    content: '🔥';
+    font-size: 0.85rem;
+  }
+
   .nav-cta {
     background: var(--green) !important;
     color: #000 !important;
@@ -84,7 +105,6 @@
     font-weight: 500 !important;
   }
 
-  /* MOBILE MENU */
   .mobile-menu-btn {
     display: none;
     background: none;
@@ -273,7 +293,6 @@
   }
 
   .scan-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-  .scan-btn:active { transform: translateY(0); }
 
   .platforms {
     display: flex;
@@ -295,6 +314,257 @@
     border-radius: 100px;
   }
 
+  /* TRENDING SECTION */
+  .trending {
+    padding: 5rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .trending-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 3rem;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .trending-title-block { flex: 1; min-width: 280px; }
+
+  .trending-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,138,61,0.1);
+    border: 0.5px solid rgba(255,138,61,0.3);
+    color: var(--orange);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .trending-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 0.5rem;
+  }
+
+  .trending-sub {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    max-width: 500px;
+  }
+
+  .trending-filters {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .filter-btn:hover { border-color: var(--border-hover); color: var(--text); }
+  .filter-btn.active { background: rgba(57,224,122,0.12); border-color: rgba(57,224,122,0.4); color: var(--green); }
+
+  .trending-scroll-wrapper {
+    position: relative;
+    margin: 0 -1.5rem;
+  }
+
+  .trending-grid {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.5rem 1.5rem 1.5rem;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .trending-grid::-webkit-scrollbar { height: 6px; }
+  .trending-grid::-webkit-scrollbar-track { background: transparent; }
+  .trending-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .trending-grid::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+  .trend-card {
+    flex: 0 0 280px;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    transition: all 0.2s;
+    scroll-snap-align: start;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .trend-card:hover {
+    border-color: rgba(255,138,61,0.3);
+    transform: translateY(-3px);
+  }
+
+  .trend-rank {
+    position: absolute;
+    top: -8px;
+    left: 1rem;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    color: var(--orange);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+  }
+
+  .trend-image {
+    width: 100%;
+    height: 140px;
+    background: var(--bg3);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    overflow: hidden;
+  }
+
+  .trend-category {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+  }
+
+  .trend-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .trend-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .trend-stat {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 0.6rem;
+  }
+
+  .trend-stat-label {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .trend-stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .trend-stat-value.profit { color: var(--green); }
+
+  .trend-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .demand-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .demand-dots { display: flex; gap: 2px; }
+
+  .demand-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--bg3);
+    border-radius: 50%;
+  }
+
+  .demand-dot.active { background: var(--green); }
+  .demand-dot.medium { background: var(--yellow); }
+  .demand-dot.high { background: var(--orange); }
+
+  .trend-arrow {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .trend-arrow.up { color: var(--green); }
+
+  .trending-cta {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+  }
+
+  .trending-cta-text {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+  }
+
+  .trending-cta-text strong { color: var(--orange); font-weight: 500; }
+
+  .trending-upgrade {
+    background: var(--orange);
+    color: #000;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.7rem 1.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .trending-upgrade:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* EXAMPLES */
   .examples { padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto; }
 
   .section-label {
@@ -326,9 +596,7 @@
   }
 
   .score-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
-
   .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.25rem; gap: 1rem; }
-
   .card-item { font-weight: 500; font-size: 0.95rem; line-height: 1.4; }
   .card-platform { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
 
@@ -364,11 +632,8 @@
   .verdict-bad { background: rgba(242,92,92,0.1); color: var(--red); }
 
   .card-action { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1rem; }
-
   .card-divider { height: 0.5px; background: var(--border); margin: 1rem 0; }
-
   .card-offer { display: flex; align-items: center; justify-content: space-between; }
-
   .offer-label { font-size: 0.78rem; color: var(--text-muted); }
   .offer-price { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--green); }
   .offer-blur { filter: blur(5px); user-select: none; color: var(--text-dim); font-size: 0.85rem; }
@@ -383,8 +648,8 @@
     cursor: pointer;
   }
 
+  /* HOW */
   .how { padding: 5rem 1.5rem; max-width: 900px; margin: 0 auto; }
-
   .steps { display: flex; flex-direction: column; gap: 0; margin-top: 3rem; position: relative; }
 
   .steps::before {
@@ -424,8 +689,8 @@
 
   .step-content p { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
 
+  /* PRICING */
   .pricing { padding: 5rem 1.5rem; max-width: 1000px; margin: 0 auto; }
-
   .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 3rem; }
 
   .pricing-card {
@@ -463,9 +728,7 @@
   }
 
   .plan-price span { font-size: 1rem; font-weight: 400; color: var(--text-muted); letter-spacing: 0; }
-
   .plan-desc { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.5rem; }
-
   .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
 
   .plan-features li {
@@ -518,12 +781,9 @@
 
   .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
   .footer-logo span { color: var(--green); }
-
   .footer-links { display: flex; gap: 1.5rem; }
-
   .footer-links a { font-size: 0.82rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
   .footer-links a:hover { color: var(--text); }
-
   .footer-copy { font-size: 0.78rem; color: var(--text-muted); }
 
   @keyframes fadeUp {
@@ -539,7 +799,7 @@
   .hero > *:nth-child(5) { animation-delay: 0.5s; }
   .hero > *:nth-child(6) { animation-delay: 0.6s; }
 
-  /* MOBILE STYLES */
+  /* MOBILE */
   @media (max-width: 768px) {
     nav { padding: 0.85rem 1.25rem; }
 
@@ -571,30 +831,18 @@
     }
 
     .mobile-menu li:last-child { border-bottom: none; padding-top: 1rem; }
-
-    .mobile-menu a {
-      font-size: 0.95rem;
-      display: block;
-    }
-
-    .mobile-menu .nav-cta {
-      text-align: center;
-      padding: 0.75rem 1.25rem !important;
-    }
+    .mobile-menu a { font-size: 0.95rem; display: block; }
+    .mobile-menu .nav-cta { text-align: center; padding: 0.75rem 1.25rem !important; }
+    .mobile-menu .nav-trending { text-align: center; padding: 0.75rem 1.25rem !important; justify-content: center; }
 
     .hero { padding: 6rem 1.25rem 3rem; }
-
     .scan-container { padding: 1.25rem; }
-
-    .scan-footer {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.75rem;
-    }
-
+    .scan-footer { flex-direction: column; align-items: stretch; gap: 0.75rem; }
     .scan-hint { text-align: center; }
-
     .scan-btn { width: 100%; }
+
+    .trending-header { flex-direction: column; align-items: flex-start; }
+    .trend-card { flex: 0 0 250px; }
 
     footer { flex-direction: column; text-align: center; }
     .footer-links { justify-content: center; }
@@ -607,8 +855,7 @@
   <a href="/" class="logo">Spot<span>Val</span></a>
 
   <ul class="desktop-nav">
-    <li><a href="#how">How it works</a></li>
-    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#trending" class="nav-trending">Trending Values</a></li>
     <li><a href="#pricing" class="nav-cta">Get started</a></li>
   </ul>
 
@@ -621,6 +868,7 @@
   </button>
 
   <ul class="mobile-menu" id="mobileMenu">
+    <li><a href="#trending" class="nav-trending" onclick="toggleMenu()">Trending Values</a></li>
     <li><a href="#how" onclick="toggleMenu()">How it works</a></li>
     <li><a href="#pricing" onclick="toggleMenu()">Pricing</a></li>
     <li><a href="#pricing" class="nav-cta" onclick="toggleMenu()">Get started</a></li>
@@ -644,13 +892,13 @@
     </div>
     <textarea id="scan-input" placeholder="Paste a listing URL from eBay, Craigslist, OfferUp, Mercari..."></textarea>
 
-    <div class="fb-notice">
+    <div class="fb-notice" id="fbNotice">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <circle cx="12" cy="12" r="10"/>
         <line x1="12" y1="8" x2="12" y2="12"/>
         <line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
-      <span><strong>Facebook Marketplace:</strong> URLs are not supported. Switch to "Paste listing text" and copy the title, price, and description directly.</span>
+      <span id="fbNoticeText"><strong>Facebook Marketplace:</strong> URLs are not supported. Switch to "Paste listing text" and copy the title, price, and description directly.</span>
     </div>
 
     <div class="scan-footer">
@@ -672,6 +920,274 @@
     <span class="platform-pill">OfferUp</span>
     <span class="platform-pill">Mercari</span>
     <span class="platform-pill">+ more</span>
+  </div>
+</section>
+
+<section class="trending" id="trending">
+  <div class="trending-header">
+    <div class="trending-title-block">
+      <span class="trending-label">🔥 Trending Values</span>
+      <h2 class="trending-title">Hot items right now</h2>
+      <p class="trending-sub">Items moving fast across major platforms with strong profit potential. Updated daily.</p>
+    </div>
+    <div class="trending-filters">
+      <button class="filter-btn active" onclick="filterTrending(this,'all')">All</button>
+      <button class="filter-btn" onclick="filterTrending(this,'electronics')">Electronics</button>
+      <button class="filter-btn" onclick="filterTrending(this,'apparel')">Apparel</button>
+      <button class="filter-btn" onclick="filterTrending(this,'furniture')">Furniture</button>
+      <button class="filter-btn" onclick="filterTrending(this,'collectibles')">Collectibles</button>
+    </div>
+  </div>
+
+  <div class="trending-scroll-wrapper">
+    <div class="trending-grid" id="trendingGrid">
+
+      <div class="trend-card" data-cat="apparel">
+        <div class="trend-rank">#01</div>
+        <div class="trend-image">👟</div>
+        <div class="trend-category">Apparel · Sneakers</div>
+        <div class="trend-name">Air Jordan 4 Retro — Bred</div>
+        <div class="trend-stats">
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Buy</div>
+            <div class="trend-stat-value">$185</div>
+          </div>
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Sell</div>
+            <div class="trend-stat-value profit">$340</div>
+          </div>
+        </div>
+        <div class="trend-footer">
+          <div class="demand-bar">
+            <span>Demand</span>
+            <div class="demand-dots">
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+            </div>
+          </div>
+          <span class="trend-arrow up">↑ 24%</span>
+        </div>
+      </div>
+
+      <div class="trend-card" data-cat="electronics">
+        <div class="trend-rank">#02</div>
+        <div class="trend-image">📱</div>
+        <div class="trend-category">Electronics · Phones</div>
+        <div class="trend-name">iPhone 13 Pro — 128GB Unlocked</div>
+        <div class="trend-stats">
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Buy</div>
+            <div class="trend-stat-value">$420</div>
+          </div>
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Sell</div>
+            <div class="trend-stat-value profit">$555</div>
+          </div>
+        </div>
+        <div class="trend-footer">
+          <div class="demand-bar">
+            <span>Demand</span>
+            <div class="demand-dots">
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot"></div>
+            </div>
+          </div>
+          <span class="trend-arrow up">↑ 18%</span>
+        </div>
+      </div>
+
+      <div class="trend-card" data-cat="furniture">
+        <div class="trend-rank">#03</div>
+        <div class="trend-image">🪑</div>
+        <div class="trend-category">Furniture · Mid-Century</div>
+        <div class="trend-name">West Elm Andes Sectional Sofa</div>
+        <div class="trend-stats">
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Buy</div>
+            <div class="trend-stat-value">$650</div>
+          </div>
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Sell</div>
+            <div class="trend-stat-value profit">$1,200</div>
+          </div>
+        </div>
+        <div class="trend-footer">
+          <div class="demand-bar">
+            <span>Demand</span>
+            <div class="demand-dots">
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot"></div>
+            </div>
+          </div>
+          <span class="trend-arrow up">↑ 31%</span>
+        </div>
+      </div>
+
+      <div class="trend-card" data-cat="electronics">
+        <div class="trend-rank">#04</div>
+        <div class="trend-image">🎮</div>
+        <div class="trend-category">Electronics · Gaming</div>
+        <div class="trend-name">PS5 Disc Edition — Used Good</div>
+        <div class="trend-stats">
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Buy</div>
+            <div class="trend-stat-value">$320</div>
+          </div>
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Sell</div>
+            <div class="trend-stat-value profit">$425</div>
+          </div>
+        </div>
+        <div class="trend-footer">
+          <div class="demand-bar">
+            <span>Demand</span>
+            <div class="demand-dots">
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+            </div>
+          </div>
+          <span class="trend-arrow up">↑ 12%</span>
+        </div>
+      </div>
+
+      <div class="trend-card" data-cat="collectibles">
+        <div class="trend-rank">#05</div>
+        <div class="trend-image">🃏</div>
+        <div class="trend-category">Collectibles · Trading Cards</div>
+        <div class="trend-name">Pokemon Booster Boxes — Sealed</div>
+        <div class="trend-stats">
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Buy</div>
+            <div class="trend-stat-value">$135</div>
+          </div>
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Sell</div>
+            <div class="trend-stat-value profit">$245</div>
+          </div>
+        </div>
+        <div class="trend-footer">
+          <div class="demand-bar">
+            <span>Demand</span>
+            <div class="demand-dots">
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot"></div>
+            </div>
+          </div>
+          <span class="trend-arrow up">↑ 28%</span>
+        </div>
+      </div>
+
+      <div class="trend-card" data-cat="apparel">
+        <div class="trend-rank">#06</div>
+        <div class="trend-image">👜</div>
+        <div class="trend-category">Apparel · Designer Bags</div>
+        <div class="trend-name">Coach Tabby Shoulder Bag 26</div>
+        <div class="trend-stats">
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Buy</div>
+            <div class="trend-stat-value">$180</div>
+          </div>
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Sell</div>
+            <div class="trend-stat-value profit">$285</div>
+          </div>
+        </div>
+        <div class="trend-footer">
+          <div class="demand-bar">
+            <span>Demand</span>
+            <div class="demand-dots">
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot"></div>
+              <div class="demand-dot"></div>
+            </div>
+          </div>
+          <span class="trend-arrow up">↑ 9%</span>
+        </div>
+      </div>
+
+      <div class="trend-card" data-cat="electronics">
+        <div class="trend-rank">#07</div>
+        <div class="trend-image">💻</div>
+        <div class="trend-category">Electronics · Laptops</div>
+        <div class="trend-name">MacBook Air M2 — 256GB</div>
+        <div class="trend-stats">
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Buy</div>
+            <div class="trend-stat-value">$720</div>
+          </div>
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Sell</div>
+            <div class="trend-stat-value profit">$895</div>
+          </div>
+        </div>
+        <div class="trend-footer">
+          <div class="demand-bar">
+            <span>Demand</span>
+            <div class="demand-dots">
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot active high"></div>
+              <div class="demand-dot"></div>
+            </div>
+          </div>
+          <span class="trend-arrow up">↑ 15%</span>
+        </div>
+      </div>
+
+      <div class="trend-card" data-cat="furniture">
+        <div class="trend-rank">#08</div>
+        <div class="trend-image">🛋️</div>
+        <div class="trend-category">Furniture · Vintage</div>
+        <div class="trend-name">Eames Lounge Chair Replica</div>
+        <div class="trend-stats">
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Buy</div>
+            <div class="trend-stat-value">$400</div>
+          </div>
+          <div class="trend-stat">
+            <div class="trend-stat-label">Avg Sell</div>
+            <div class="trend-stat-value profit">$680</div>
+          </div>
+        </div>
+        <div class="trend-footer">
+          <div class="demand-bar">
+            <span>Demand</span>
+            <div class="demand-dots">
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot active medium"></div>
+              <div class="demand-dot"></div>
+            </div>
+          </div>
+          <span class="trend-arrow up">↑ 22%</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="trending-cta">
+    <p class="trending-cta-text">Get the <strong>full Trending Values dashboard</strong> with profit margins, seasonal alerts, and best-platform data.</p>
+    <button class="trending-upgrade" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Upgrade to Flipper — $29/mo</button>
   </div>
 </section>
 
@@ -804,7 +1320,7 @@
       <div class="plan-desc">For resellers who mean business</div>
       <ul class="plan-features">
         <li>Everything in Pro</li>
-        <li>Trending items dashboard</li>
+        <li>Trending Values dashboard</li>
         <li>Bulk listing scanner</li>
         <li>Profit margin estimates</li>
         <li>Seasonal price alerts</li>
@@ -829,7 +1345,12 @@
 <script>
   const placeholders = {
     url: "Paste a listing URL from eBay, Craigslist, OfferUp, Mercari...",
-    text: "Paste the listing title, price, condition, and description here..."
+    text: "Paste your Facebook Marketplace listing here — include the title, price, condition, and full description for the most accurate score..."
+  };
+
+  const fbNoticeText = {
+    url: '<strong>Facebook Marketplace:</strong> URLs are not supported. Switch to "Paste listing text" and copy the title, price, and description directly.',
+    text: '<strong>Facebook Marketplace tip:</strong> Copy the entire listing — title, asking price, condition, and description — for the most accurate deal score.'
   };
 
   function switchTab(btn, type) {
@@ -838,6 +1359,7 @@
     const input = document.getElementById('scan-input');
     input.placeholder = placeholders[type];
     input.value = '';
+    document.getElementById('fbNoticeText').innerHTML = fbNoticeText[type];
     input.focus();
   }
 
@@ -863,6 +1385,18 @@
 
   function toggleMenu() {
     document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  function filterTrending(btn, category) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.trend-card').forEach(card => {
+      if (category === 'all' || card.dataset.cat === category) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
   }
 </script>
 
