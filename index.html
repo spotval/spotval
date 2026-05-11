@@ -1805,31 +1805,6 @@
     text: '<strong>Facebook Marketplace tip:</strong> Copy the entire listing — title, asking price, condition, and description — for the most accurate deal score.'
   };
 
-  // Mock scenarios for demo — will be replaced by Claude API responses later
-  const mockResults = [
-    {
-      score: 82, color: '#39e07a', verdict: 'Great Deal', verdictClass: 'verdict-green', verdictIcon: '✓',
-      title: 'iPhone 13 Pro — 128GB — Good Condition', meta: 'Facebook Marketplace · Listed at $420',
-      message: 'Priced well below market average. Comparable items sold for $480 on eBay over the past 30 days. Strong buy signal.',
-      confidence: 'High confidence · 2,400 comparable sales analyzed',
-      recommendation: 'Buy now', offer: '$385'
-    },
-    {
-      score: 61, color: '#f5c842', verdict: 'Fair Deal', verdictClass: 'verdict-yellow', verdictIcon: '~',
-      title: 'IKEA MALM Bed Frame — Queen', meta: 'Craigslist · Listed at $180',
-      message: 'Retail is $299. Secondhand pricing is reasonable but there is room to negotiate before pulling the trigger.',
-      confidence: 'Medium confidence · 340 comparable sales analyzed',
-      recommendation: 'Negotiate', offer: '$145'
-    },
-    {
-      score: 24, color: '#f25c5c', verdict: 'Overpriced', verdictClass: 'verdict-red', verdictIcon: '✕',
-      title: '2015 MacBook Pro 13" — 8GB RAM', meta: 'OfferUp · Listed at $750',
-      message: 'Comparable models sell for $280 to $340. This listing is significantly overpriced and likely will not sell at this rate.',
-      confidence: 'High confidence · 1,800 comparable sales analyzed',
-      recommendation: 'Pass or lowball', offer: '$310'
-    }
-  ];
-
   let currentTab = 'url';
   let selectedCondition = '';
 
@@ -1897,7 +1872,9 @@
   }
 
   async function handleScan() {
-    // Validate based on which tab is active
+    // Build the request payload based on which tab is active
+    let payload;
+
     if (currentTab === 'url') {
       const input = document.getElementById('scan-input');
       if (!input.value.trim()) {
@@ -1906,6 +1883,7 @@
         setTimeout(() => { input.style.borderColor = ''; }, 1500);
         return;
       }
+      payload = { inputType: 'url', url: input.value.trim() };
     } else {
       // Validate structured fields
       const title = document.getElementById('field-title');
@@ -1914,7 +1892,6 @@
       const trigger = document.getElementById('conditionTrigger');
 
       let firstInvalid = null;
-
       if (!title.value.trim()) firstInvalid = firstInvalid || title;
       if (!price.value.trim()) firstInvalid = firstInvalid || price;
       if (!selectedCondition) firstInvalid = firstInvalid || trigger;
@@ -1926,12 +1903,20 @@
         setTimeout(() => { firstInvalid.style.borderColor = ''; }, 1500);
         return;
       }
+
+      payload = {
+        inputType: 'text',
+        title: title.value.trim(),
+        price: price.value.trim().replace(/[^0-9.]/g, ''),
+        condition: selectedCondition,
+        description: description.value.trim()
+      };
     }
 
     // Move to analyzing state
     showState('state-analyzing');
 
-    // Run analyzing animation
+    // Start the analyzing animation (runs in parallel with API call)
     const steps = [
       'Reading listing details',
       'Pulling comparable sales data',
@@ -1942,47 +1927,74 @@
     const progressBar = document.getElementById('progressBar');
     const stepEl = document.getElementById('analyzingStep');
 
-    for (let i = 0; i < steps.length; i++) {
-      stepEl.style.opacity = '0';
-      await wait(200);
-      stepEl.textContent = steps[i];
-      stepEl.style.opacity = '1';
-      progressBar.style.width = `${((i + 1) / steps.length) * 100}%`;
-      await wait(700);
-    }
+    // Kick off the API call immediately
+    const apiPromise = fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-    // Show results
-    showResults();
+    // Run the animation steps
+    const animationPromise = (async () => {
+      for (let i = 0; i < steps.length; i++) {
+        stepEl.style.opacity = '0';
+        await wait(200);
+        stepEl.textContent = steps[i];
+        stepEl.style.opacity = '1';
+        progressBar.style.width = `${((i + 1) / steps.length) * 100}%`;
+        await wait(700);
+      }
+    })();
+
+    // Wait for BOTH the API call and minimum animation time
+    try {
+      const [response] = await Promise.all([apiPromise, animationPromise]);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Scan failed');
+      }
+
+      const result = await response.json();
+      showResults(result);
+
+    } catch (error) {
+      console.error('Scan error:', error);
+      showError(error.message || 'Something went wrong. Please try again.');
+    }
   }
 
-  function showResults() {
-    // Pick a random mock for demo variety
-    const result = mockResults[Math.floor(Math.random() * mockResults.length)];
-
-    // Update content
-    document.getElementById('resultTitle').textContent = result.title;
-    document.getElementById('resultMeta').textContent = result.meta;
+  function showResults(result) {
+    // Update content with real AI response
+    document.getElementById('resultTitle').textContent = result.listingTitle || 'Your listing';
+    document.getElementById('resultMeta').textContent = result.listingMeta || '';
     document.getElementById('resultMessage').textContent = result.message;
     document.getElementById('resultConfidence').textContent = result.confidence;
     document.getElementById('recommendationText').textContent = result.recommendation;
 
+    // Map verdict to CSS class
+    let verdictClass = 'verdict-yellow';
+    if (result.verdict === 'Great Deal') verdictClass = 'verdict-green';
+    else if (result.verdict === 'Overpriced') verdictClass = 'verdict-red';
+
     const verdictEl = document.getElementById('resultVerdict');
-    verdictEl.className = 'result-verdict ' + result.verdictClass;
-    document.getElementById('verdictIcon').textContent = result.verdictIcon;
+    verdictEl.className = 'result-verdict ' + verdictClass;
+    document.getElementById('verdictIcon').textContent = result.verdictIcon || '✓';
     document.getElementById('verdictText').textContent = result.verdict;
 
     // Reset score animation
     const ring = document.getElementById('scoreRingFill');
     const num = document.getElementById('scoreNumber');
+    const color = result.verdictColor || '#39e07a';
     ring.style.transition = 'none';
     ring.style.strokeDashoffset = '377';
-    ring.style.stroke = result.color;
-    num.style.color = result.color;
+    ring.style.stroke = color;
+    num.style.color = color;
     num.textContent = '0';
 
     showState('state-result');
 
-    // Animate score
+    // Animate score reveal
     setTimeout(() => {
       ring.style.transition = 'stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
       const targetOffset = 377 - (377 * result.score / 100);
@@ -1990,12 +2002,17 @@
       animateCounter(num, 0, result.score, 1800);
     }, 100);
 
-    // Stagger reveal of verdict, message, confidence
+    // Stagger the reveal of result elements
     setTimeout(() => { document.getElementById('resultVerdict').classList.add('show'); }, 1400);
     setTimeout(() => { document.getElementById('resultMessage').classList.add('show'); }, 1700);
     setTimeout(() => { document.getElementById('resultConfidence').classList.add('show'); }, 1900);
     setTimeout(() => { document.getElementById('resultActionCard').classList.add('show'); }, 2100);
     setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2300);
+  }
+
+  function showError(message) {
+    alert(message);
+    resetScan();
   }
 
   function resetScan() {
