@@ -219,6 +219,147 @@
   textarea::placeholder { color: var(--text-muted); }
   textarea:focus { border-color: rgba(57,224,122,0.3); }
 
+  /* STRUCTURED FORM FIELDS */
+  .form-fields { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .form-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    padding-left: 2px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    padding: 0.75rem 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input::placeholder { color: var(--text-muted); }
+  .form-input:focus { border-color: rgba(57,224,122,0.3); }
+
+  .form-textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    padding: 0.75rem 0.9rem;
+    resize: none;
+    height: 90px;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-textarea::placeholder { color: var(--text-muted); }
+  .form-textarea:focus { border-color: rgba(57,224,122,0.3); }
+
+  /* CUSTOM DROPDOWN */
+  .dropdown {
+    position: relative;
+    width: 100%;
+  }
+
+  .dropdown-trigger {
+    width: 100%;
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    padding: 0.75rem 0.9rem;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.2s;
+  }
+
+  .dropdown-trigger:hover { border-color: var(--border-hover); }
+  .dropdown-trigger.open { border-color: rgba(57,224,122,0.4); }
+  .dropdown-trigger.placeholder { color: var(--text-muted); }
+
+  .dropdown-arrow {
+    width: 12px;
+    height: 12px;
+    color: var(--text-dim);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+  }
+
+  .dropdown-trigger.open .dropdown-arrow { transform: rotate(180deg); }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.4rem;
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .dropdown-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .dropdown-option {
+    padding: 0.55rem 0.7rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    transition: all 0.15s;
+  }
+
+  .dropdown-option:hover { background: var(--bg3); color: var(--text); }
+  .dropdown-option.selected { background: rgba(57,224,122,0.08); color: var(--green); }
+
+  /* PRICE INPUT WITH PREFIX */
+  .price-wrap {
+    position: relative;
+  }
+
+  .price-prefix {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    pointer-events: none;
+  }
+
+  .price-wrap .form-input { padding-left: 1.6rem; }
+
   .fb-notice {
     display: flex;
     align-items: flex-start;
@@ -1082,6 +1223,8 @@
     .scan-hint { text-align: center; }
     .scan-btn { width: 100%; }
 
+    .form-row { grid-template-columns: 1fr; }
+
     .score-display { gap: 1rem; padding: 1rem 0; }
     .score-info { text-align: center; }
     .result-actions { flex-direction: column; }
@@ -1126,10 +1269,10 @@
   <div class="hero-fade" style="display:contents;">
     <div class="badge">
       <div class="badge-dot"></div>
-      Smart-Powered Deal Scoring
+      Real market data · Real-time analysis
     </div>
 
-    <h1>Is it actually a<br><em>good deal?</em></h1>
+    <h1>Spot a deal before<br><em>everyone else.</em></h1>
 
     <p class="hero-sub">Paste any listing from any platform. SpotVal analyzes it in seconds and tells you exactly what it is worth and what to do next.</p>
 
@@ -1142,7 +1285,54 @@
             <button class="scan-tab active" onclick="switchTab(this,'url')">Paste URL</button>
             <button class="scan-tab" onclick="switchTab(this,'text')">Paste listing text</button>
           </div>
-          <textarea id="scan-input" placeholder="Paste a listing URL from eBay, Craigslist, OfferUp, Mercari..."></textarea>
+          <!-- URL INPUT MODE -->
+          <div id="urlInputMode">
+            <textarea id="scan-input" placeholder="Paste a listing URL from eBay, Craigslist, OfferUp, Mercari..."></textarea>
+          </div>
+
+          <!-- STRUCTURED FORM MODE -->
+          <div id="textInputMode" style="display:none;">
+            <div class="form-fields">
+              <div class="form-group">
+                <label class="form-label" for="field-title">Listing Title</label>
+                <input type="text" id="field-title" class="form-input" placeholder="e.g. iPhone 13 Pro 128GB Unlocked">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label" for="field-price">Listed Price</label>
+                  <div class="price-wrap">
+                    <span class="price-prefix">$</span>
+                    <input type="text" id="field-price" class="form-input" placeholder="0.00" inputmode="decimal">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Condition</label>
+                  <div class="dropdown">
+                    <button type="button" class="dropdown-trigger placeholder" id="conditionTrigger" onclick="toggleDropdown(event)">
+                      <span id="conditionLabel">Select condition</span>
+                      <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <polyline points="3 4.5 6 7.5 9 4.5"/>
+                      </svg>
+                    </button>
+                    <div class="dropdown-menu" id="conditionMenu">
+                      <div class="dropdown-option" onclick="selectCondition('New')">New</div>
+                      <div class="dropdown-option" onclick="selectCondition('Used - Like New')">Used - Like New</div>
+                      <div class="dropdown-option" onclick="selectCondition('Used - Good')">Used - Good</div>
+                      <div class="dropdown-option" onclick="selectCondition('Used - Fair')">Used - Fair</div>
+                      <div class="dropdown-option" onclick="selectCondition('Unknown')">Unknown</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="field-description">Description</label>
+                <textarea id="field-description" class="form-textarea" placeholder="Paste the full listing description here — include any details about wear, included accessories, reason for selling, etc."></textarea>
+              </div>
+            </div>
+          </div>
 
           <div class="fb-notice" id="fbNotice">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -1630,17 +1820,62 @@
   ];
 
   let currentTab = 'url';
+  let selectedCondition = '';
 
   function switchTab(btn, type) {
     document.querySelectorAll('.scan-tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     currentTab = type;
-    const input = document.getElementById('scan-input');
-    input.placeholder = placeholders[type];
-    input.value = '';
+
+    const urlMode = document.getElementById('urlInputMode');
+    const textMode = document.getElementById('textInputMode');
+
+    if (type === 'url') {
+      urlMode.style.display = '';
+      textMode.style.display = 'none';
+      document.getElementById('scan-input').focus();
+    } else {
+      urlMode.style.display = 'none';
+      textMode.style.display = '';
+      document.getElementById('field-title').focus();
+    }
+
     document.getElementById('fbNoticeText').innerHTML = fbNoticeText[type];
-    input.focus();
   }
+
+  function toggleDropdown(event) {
+    event.stopPropagation();
+    const trigger = document.getElementById('conditionTrigger');
+    const menu = document.getElementById('conditionMenu');
+    trigger.classList.toggle('open');
+    menu.classList.toggle('open');
+  }
+
+  function selectCondition(value) {
+    selectedCondition = value;
+    const label = document.getElementById('conditionLabel');
+    const trigger = document.getElementById('conditionTrigger');
+    const menu = document.getElementById('conditionMenu');
+
+    label.textContent = value;
+    trigger.classList.remove('placeholder', 'open');
+    menu.classList.remove('open');
+
+    // Mark selected option
+    document.querySelectorAll('#conditionMenu .dropdown-option').forEach(opt => {
+      opt.classList.toggle('selected', opt.textContent === value);
+    });
+  }
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('conditionMenu');
+    const trigger = document.getElementById('conditionTrigger');
+    if (menu && trigger && !menu.contains(e.target) && !trigger.contains(e.target)) {
+      menu.classList.remove('open');
+      trigger.classList.remove('open');
+    }
+  });
 
   function showState(stateId) {
     document.querySelectorAll('.scan-state').forEach(s => s.classList.remove('active'));
@@ -1648,12 +1883,35 @@
   }
 
   async function handleScan() {
-    const input = document.getElementById('scan-input');
-    if (!input.value.trim()) {
-      input.focus();
-      input.style.borderColor = 'rgba(242,92,92,0.5)';
-      setTimeout(() => { input.style.borderColor = ''; }, 1500);
-      return;
+    // Validate based on which tab is active
+    if (currentTab === 'url') {
+      const input = document.getElementById('scan-input');
+      if (!input.value.trim()) {
+        input.focus();
+        input.style.borderColor = 'rgba(242,92,92,0.5)';
+        setTimeout(() => { input.style.borderColor = ''; }, 1500);
+        return;
+      }
+    } else {
+      // Validate structured fields
+      const title = document.getElementById('field-title');
+      const price = document.getElementById('field-price');
+      const description = document.getElementById('field-description');
+      const trigger = document.getElementById('conditionTrigger');
+
+      let firstInvalid = null;
+
+      if (!title.value.trim()) firstInvalid = firstInvalid || title;
+      if (!price.value.trim()) firstInvalid = firstInvalid || price;
+      if (!selectedCondition) firstInvalid = firstInvalid || trigger;
+      if (!description.value.trim()) firstInvalid = firstInvalid || description;
+
+      if (firstInvalid) {
+        firstInvalid.focus();
+        firstInvalid.style.borderColor = 'rgba(242,92,92,0.5)';
+        setTimeout(() => { firstInvalid.style.borderColor = ''; }, 1500);
+        return;
+      }
     }
 
     // Move to analyzing state
@@ -1729,9 +1987,27 @@
   function resetScan() {
     document.querySelectorAll('.result-verdict, .result-message, .result-confidence, .result-action-card, .result-actions').forEach(el => el.classList.remove('show'));
     document.getElementById('progressBar').style.width = '0%';
+
+    // Clear URL input
     document.getElementById('scan-input').value = '';
+
+    // Clear structured form
+    document.getElementById('field-title').value = '';
+    document.getElementById('field-price').value = '';
+    document.getElementById('field-description').value = '';
+    selectedCondition = '';
+    document.getElementById('conditionLabel').textContent = 'Select condition';
+    document.getElementById('conditionTrigger').classList.add('placeholder');
+    document.querySelectorAll('#conditionMenu .dropdown-option').forEach(opt => opt.classList.remove('selected'));
+
     showState('state-input');
-    document.getElementById('scan-input').focus();
+
+    // Focus the right field based on current tab
+    if (currentTab === 'url') {
+      document.getElementById('scan-input').focus();
+    } else {
+      document.getElementById('field-title').focus();
+    }
   }
 
   function animateCounter(element, start, end, duration) {
