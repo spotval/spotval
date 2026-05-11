@@ -772,6 +772,95 @@
     font-weight: 500;
   }
 
+  /* SUGGESTED MESSAGE CARD */
+  .message-card {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.5s, transform 0.5s;
+    position: relative;
+  }
+
+  .message-card.show { opacity: 1; transform: translateY(0); }
+
+  .message-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+    gap: 1rem;
+  }
+
+  .message-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .message-label svg {
+    width: 12px;
+    height: 12px;
+    color: var(--green);
+  }
+
+  .message-copy-btn {
+    background: rgba(57,224,122,0.08);
+    border: 0.5px solid rgba(57,224,122,0.25);
+    color: var(--green);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .message-copy-btn:hover {
+    background: rgba(57,224,122,0.15);
+    border-color: rgba(57,224,122,0.5);
+  }
+
+  .message-copy-btn.copied {
+    background: var(--green);
+    color: #000;
+    border-color: transparent;
+  }
+
+  .message-copy-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .message-body {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .message-hint {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.7rem;
+    line-height: 1.5;
+  }
+
   /* RESULT BUTTONS */
   .result-actions {
     display: flex;
@@ -1617,6 +1706,30 @@
             </div>
           </div>
 
+          <div class="message-card" id="messageCard">
+            <div class="message-header">
+              <span class="message-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                Suggested response
+              </span>
+              <button class="message-copy-btn" id="messageCopyBtn" onclick="copyMessage()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                <span id="messageCopyText">Copy</span>
+              </button>
+            </div>
+            <div class="message-body" id="messageBody">
+              Loading suggested response...
+            </div>
+            <div class="message-hint">
+              Tap copy and paste this into your message to the seller. Edit it to match your voice.
+            </div>
+          </div>
+
           <div class="result-actions" id="resultActions">
             <button class="result-btn" onclick="resetScan()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -2156,6 +2269,12 @@
     document.getElementById('resultConfidence').textContent = result.confidence;
     document.getElementById('recommendationText').textContent = result.recommendation;
     document.getElementById('offerValue').textContent = result.offer || '—';
+    document.getElementById('messageBody').textContent = result.suggestedMessage || 'No suggested message available.';
+
+    // Reset copy button state
+    const copyBtn = document.getElementById('messageCopyBtn');
+    copyBtn.classList.remove('copied');
+    document.getElementById('messageCopyText').textContent = 'Copy';
 
     // Save to scan history (localStorage)
     saveToHistory(result);
@@ -2195,7 +2314,8 @@
     setTimeout(() => { document.getElementById('resultMessage').classList.add('show'); }, 1700);
     setTimeout(() => { document.getElementById('resultConfidence').classList.add('show'); }, 1900);
     setTimeout(() => { document.getElementById('resultActionCard').classList.add('show'); }, 2100);
-    setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2300);
+    setTimeout(() => { document.getElementById('messageCard').classList.add('show'); }, 2300);
+    setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2500);
   }
 
   function showError(message) {
@@ -2203,8 +2323,39 @@
     resetScan();
   }
 
+  async function copyMessage() {
+    const messageText = document.getElementById('messageBody').textContent;
+    const btn = document.getElementById('messageCopyBtn');
+    const btnText = document.getElementById('messageCopyText');
+
+    if (!messageText || messageText === 'Loading suggested response...' || messageText === 'No suggested message available.') {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(messageText);
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = messageText;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(textArea);
+    }
+
+    btn.classList.add('copied');
+    btnText.textContent = 'Copied';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btnText.textContent = 'Copy';
+    }, 2000);
+  }
+
   function resetScan() {
-    document.querySelectorAll('.result-verdict, .result-message, .result-confidence, .result-action-card, .result-actions').forEach(el => el.classList.remove('show'));
+    document.querySelectorAll('.result-verdict, .result-message, .result-confidence, .result-action-card, .message-card, .result-actions').forEach(el => el.classList.remove('show'));
     document.getElementById('progressBar').style.width = '0%';
 
     // Clear URL input
@@ -2373,7 +2524,7 @@
 
     // Re-display the result without re-running the scan
     setTimeout(() => {
-      document.querySelectorAll('.result-verdict, .result-message, .result-confidence, .result-action-card, .result-actions').forEach(el => el.classList.remove('show'));
+      document.querySelectorAll('.result-verdict, .result-message, .result-confidence, .result-action-card, .message-card, .result-actions').forEach(el => el.classList.remove('show'));
       showResultsFromHistory(entry);
     }, 400);
   }
@@ -2386,6 +2537,12 @@
     document.getElementById('resultConfidence').textContent = result.confidence;
     document.getElementById('recommendationText').textContent = result.recommendation;
     document.getElementById('offerValue').textContent = result.offer || '—';
+    document.getElementById('messageBody').textContent = result.suggestedMessage || 'No suggested message available.';
+
+    // Reset copy button
+    const copyBtn = document.getElementById('messageCopyBtn');
+    copyBtn.classList.remove('copied');
+    document.getElementById('messageCopyText').textContent = 'Copy';
 
     let verdictClass = 'verdict-yellow';
     if (result.verdict === 'Great Deal') verdictClass = 'verdict-green';
@@ -2418,7 +2575,8 @@
     setTimeout(() => { document.getElementById('resultMessage').classList.add('show'); }, 1700);
     setTimeout(() => { document.getElementById('resultConfidence').classList.add('show'); }, 1900);
     setTimeout(() => { document.getElementById('resultActionCard').classList.add('show'); }, 2100);
-    setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2300);
+    setTimeout(() => { document.getElementById('messageCard').classList.add('show'); }, 2300);
+    setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2500);
   }
 
   // Render history on page load
