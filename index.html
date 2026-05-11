@@ -200,6 +200,30 @@
 
   .scan-tab.active { background: rgba(57,224,122,0.12); border-color: rgba(57,224,122,0.4); color: var(--green); }
 
+  .scan-tab.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: var(--bg3);
+    color: var(--text-muted);
+    border-color: var(--border);
+    position: relative;
+  }
+
+  .tab-soon {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.62rem;
+    background: rgba(245,200,66,0.15);
+    color: var(--yellow);
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    vertical-align: 1px;
+  }
+
   .tab-recommended {
     display: inline-block;
     margin-left: 4px;
@@ -1293,16 +1317,16 @@
       <div class="scan-state active" id="state-input">
         <div class="scan-container">
           <div class="scan-tabs">
-            <button class="scan-tab active" onclick="switchTab(this,'url')">Paste URL</button>
-            <button class="scan-tab" onclick="switchTab(this,'text')">Paste listing text<span class="tab-recommended">(Recommended for Facebook Marketplace)</span></button>
+            <button class="scan-tab active" onclick="switchTab(this,'text')">Paste listing text<span class="tab-recommended">(Recommended for Facebook Marketplace)</span></button>
+            <button class="scan-tab disabled" onclick="return false;" title="URL scanning coming soon">Paste URL<span class="tab-soon">Soon</span></button>
           </div>
           <!-- URL INPUT MODE -->
-          <div id="urlInputMode">
+          <div id="urlInputMode" style="display:none;">
             <textarea id="scan-input" placeholder="Paste a listing URL from eBay, Craigslist, OfferUp, Mercari..."></textarea>
           </div>
 
           <!-- STRUCTURED FORM MODE -->
-          <div id="textInputMode" style="display:none;">
+          <div id="textInputMode">
             <div class="form-fields">
               <div class="form-group">
                 <label class="form-label" for="field-title">Listing Title</label>
@@ -1345,7 +1369,7 @@
             </div>
           </div>
 
-          <div class="fb-notice" id="fbNotice">
+          <div class="fb-notice" id="fbNotice" style="display:none;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
@@ -1805,7 +1829,7 @@
     text: '<strong>Facebook Marketplace tip:</strong> Copy the entire listing — title, asking price, condition, and description — for the most accurate deal score.'
   };
 
-  let currentTab = 'url';
+  let currentTab = 'text';
   let selectedCondition = '';
 
   function switchTab(btn, type) {
