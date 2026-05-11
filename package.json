@@ -1,0 +1,9 @@
+{
+  "name": "spotval",
+  "version": "1.0.0",
+  "description": "Spot the value in any online listing",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
