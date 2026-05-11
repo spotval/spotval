@@ -200,6 +200,16 @@
 
   .scan-tab.active { background: rgba(57,224,122,0.12); border-color: rgba(57,224,122,0.4); color: var(--green); }
 
+  .tab-recommended {
+    display: inline-block;
+    margin-left: 4px;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .scan-tab.active .tab-recommended { color: rgba(57,224,122,0.7); }
+
   textarea {
     width: 100%;
     background: var(--bg3);
@@ -1223,6 +1233,7 @@
     .scan-hint { text-align: center; }
     .scan-btn { width: 100%; }
 
+    .tab-recommended { display: none; }
     .form-row { grid-template-columns: 1fr; }
 
     .score-display { gap: 1rem; padding: 1rem 0; }
@@ -1274,7 +1285,7 @@
 
     <h1>Spot a deal before<br><em>everyone else.</em></h1>
 
-    <p class="hero-sub">Paste any listing from any platform. SpotVal analyzes it in seconds and tells you exactly what it is worth and what to do next.</p>
+    <p class="hero-sub">Any listing. Any platform. Scored in seconds.</p>
 
     <div class="scan-stack">
 
@@ -1283,7 +1294,7 @@
         <div class="scan-container">
           <div class="scan-tabs">
             <button class="scan-tab active" onclick="switchTab(this,'url')">Paste URL</button>
-            <button class="scan-tab" onclick="switchTab(this,'text')">Paste listing text</button>
+            <button class="scan-tab" onclick="switchTab(this,'text')">Paste listing text<span class="tab-recommended">(Recommended for Facebook Marketplace)</span></button>
           </div>
           <!-- URL INPUT MODE -->
           <div id="urlInputMode">
@@ -1829,14 +1840,17 @@
 
     const urlMode = document.getElementById('urlInputMode');
     const textMode = document.getElementById('textInputMode');
+    const fbNotice = document.getElementById('fbNotice');
 
     if (type === 'url') {
       urlMode.style.display = '';
       textMode.style.display = 'none';
+      fbNotice.style.display = '';
       document.getElementById('scan-input').focus();
     } else {
       urlMode.style.display = 'none';
       textMode.style.display = '';
+      fbNotice.style.display = 'none';
       document.getElementById('field-title').focus();
     }
 
