@@ -1,0 +1,115 @@
+// SpotVal Backend API Route
+// This file runs on Vercel's servers, not in the user's browser
+// It calls GPT-4.1 via GitHub Models and returns a structured deal score
+
+export default async function handler(req, res) {
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { inputType, url, title, price, condition, description } = req.body;
+
+    // Validate input based on type
+    if (inputType === 'url') {
+      if (!url || url.trim().length < 5) {
+        return res.status(400).json({ error: 'Please provide a valid listing URL' });
+      }
+    } else {
+      if (!title || !price || !condition || !description) {
+        return res.status(400).json({ error: 'Please fill in all listing fields' });
+      }
+    }
+
+    // Build the prompt for GPT-4.1
+    const listingDetails = inputType === 'url'
+      ? `URL: ${url}\n\nNote: The user pasted a URL. Analyze based on what you can infer from the URL and your market knowledge.`
+      : `Title: ${title}\nListed Price: $${price}\nCondition: ${condition}\nDescription: ${description}`;
+
+    const systemPrompt = `You are SpotVal, an expert at analyzing online secondhand listings to determine if they are good deals. You analyze listings from Facebook Marketplace, eBay, Craigslist, OfferUp, Mercari, and other platforms.
+
+Your job is to return a structured JSON analysis with:
+- score: integer 0-100 (where 80+ is great, 50-79 is fair, below 50 is overpriced)
+- verdict: one of "Great Deal", "Fair Deal", or "Overpriced"
+- verdictIcon: one of "✓" (great), "~" (fair), or "✕" (overpriced)
+- verdictColor: hex color - "#39e07a" for great, "#f5c842" for fair, "#f25c5c" for overpriced
+- message: 1-2 sentence plain-English explanation of why this score
+- recommendation: short action like "Buy now", "Negotiate", "Pass", "Lowball offer"
+- offer: suggested offer price as string with dollar sign like "$385"
+- confidence: short string like "High confidence based on market knowledge" or "Medium confidence - limited data on this item"
+
+Be honest and direct. Base scores on actual market value, condition described, and platform pricing norms.
+
+Return ONLY valid JSON. No markdown, no code fences, no extra text.`;
+
+    const userPrompt = `Analyze this listing:\n\n${listingDetails}\n\nReturn your structured JSON analysis.`;
+
+    // Call GPT-4.1 via GitHub Models
+    const response = await fetch('https://models.github.ai/inference/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-4.1',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.3,
+        max_tokens: 500,
+        response_format: { type: 'json_object' }
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('GitHub Models API error:', response.status, errorText);
+      return res.status(500).json({
+        error: 'Analysis service unavailable. Please try again in a moment.'
+      });
+    }
+
+    const data = await response.json();
+    const aiContent = data.choices?.[0]?.message?.content;
+
+    if (!aiContent) {
+      return res.status(500).json({ error: 'No analysis returned. Please try again.' });
+    }
+
+    // Parse the AI response
+    let analysis;
+    try {
+      analysis = JSON.parse(aiContent);
+    } catch (parseError) {
+      console.error('Failed to parse AI response:', aiContent);
+      return res.status(500).json({ error: 'Invalid analysis format. Please try again.' });
+    }
+
+    // Build the response for the frontend
+    const result = {
+      score: analysis.score || 50,
+      verdict: analysis.verdict || 'Fair Deal',
+      verdictIcon: analysis.verdictIcon || '~',
+      verdictColor: analysis.verdictColor || '#f5c842',
+      message: analysis.message || 'Analysis complete.',
+      recommendation: analysis.recommendation || 'Review carefully',
+      offer: analysis.offer || '$0',
+      confidence: analysis.confidence || 'Medium confidence',
+      listingTitle: inputType === 'url' ? 'Listing from URL' : title,
+      listingMeta: inputType === 'url'
+        ? url.substring(0, 60) + (url.length > 60 ? '...' : '')
+        : `Listed at $${price} · ${condition}`
+    };
+
+    return res.status(200).json(result);
+
+  } catch (error) {
+    console.error('Scan API error:', error);
+    return res.status(500).json({
+      error: 'Something went wrong analyzing your listing. Please try again.'
+    });
+  }
+}
