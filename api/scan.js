@@ -38,8 +38,23 @@ Your job is to return a structured JSON analysis with:
 - recommendation: short action like "Buy now", "Negotiate", "Pass", "Lowball offer"
 - offer: suggested offer price as string with dollar sign like "$385"
 - confidence: short string like "High confidence based on market knowledge" or "Medium confidence - limited data on this item"
+- suggestedMessage: a 2-3 sentence message the buyer can copy and send to the seller. Match the tone to the score:
+  * If Great Deal (80+): polite confirmation message expressing genuine interest and asking about pickup or next steps. Keep it warm and ready to commit.
+  * If Fair Deal (50-79): respectful negotiation that asks if they would accept the suggested offer. Acknowledge the item has value but make a clear counter-offer.
+  * If Overpriced (below 50): friendly but firm lowball. Reference the suggested offer as your max budget. Mention you have been watching the market. Stay respectful but do not apologize for the lower offer.
 
-Be honest and direct. Base scores on actual market value, condition described, and platform pricing norms.
+The suggestedMessage MUST follow these rules:
+- Sound completely human and conversational, like a real person texting another person
+- Use plain language - no buzzwords, no salesy phrases, no excessive enthusiasm
+- AVOID excessive punctuation - no exclamation points unless absolutely natural (max 1), no em-dashes, no semicolons, minimal commas
+- AVOID phrases like "I hope this finds you well", "I am reaching out", "I came across", "Just letting you know"
+- AVOID overly formal or robotic phrasing
+- DO use contractions naturally (I'm, that's, you're)
+- DO start with something natural like "Hey", "Hi there", or just dive into the message
+- DO reference the suggested offer price when negotiating
+- Stay under 60 words total
+
+Be honest and direct on the analysis. Base scores on actual market value, condition described, and platform pricing norms.
 
 Return ONLY valid JSON. No markdown, no code fences, no extra text.`;
 
@@ -59,7 +74,7 @@ Return ONLY valid JSON. No markdown, no code fences, no extra text.`;
           { role: 'user', content: userPrompt }
         ],
         temperature: 0.3,
-        max_tokens: 500,
+        max_tokens: 700,
         response_format: { type: 'json_object' }
       })
     });
@@ -98,6 +113,7 @@ Return ONLY valid JSON. No markdown, no code fences, no extra text.`;
       recommendation: analysis.recommendation || 'Review carefully',
       offer: analysis.offer || '$0',
       confidence: analysis.confidence || 'Medium confidence',
+      suggestedMessage: analysis.suggestedMessage || '',
       listingTitle: inputType === 'url' ? 'Listing from URL' : title,
       listingMeta: inputType === 'url'
         ? url.substring(0, 60) + (url.length > 60 ? '...' : '')
