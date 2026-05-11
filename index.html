@@ -999,6 +999,159 @@
 
   .trending-upgrade:hover { opacity: 0.88; transform: translateY(-1px); }
 
+  /* SCAN HISTORY */
+  .history {
+    padding: 5rem 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: none;
+  }
+
+  .history.active { display: block; }
+
+  .history-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .history-title-block { flex: 1; min-width: 280px; }
+
+  .history-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(57,224,122,0.08);
+    border: 0.5px solid rgba(57,224,122,0.2);
+    color: var(--green);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .history-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 0.5rem;
+  }
+
+  .history-sub { color: var(--text-dim); font-size: 0.95rem; max-width: 500px; }
+
+  .history-clear {
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .history-clear:hover { color: var(--red); border-color: rgba(242,92,92,0.3); }
+
+  .history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .history-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem;
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .history-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+  .history-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .history-card-info { flex: 1; min-width: 0; }
+
+  .history-card-title {
+    font-size: 0.92rem;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 0.35rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+
+  .history-card-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .history-card-score {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .history-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.85rem;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .history-card-verdict {
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0.25rem 0.7rem;
+    border-radius: 5px;
+  }
+
+  .history-card-time {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .history-card-view {
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .history-card-view:hover { color: var(--green); border-color: rgba(57,224,122,0.3); }
+
   /* EXAMPLES */
   .examples { padding: 5rem 1.5rem; max-width: 1100px; margin: 0 auto; }
 
@@ -1281,7 +1434,7 @@
 
   <ul class="desktop-nav">
     <li><a href="#trending" class="nav-trending">Trending Values</a></li>
-    <li><a href="#pricing" class="nav-cta">Get started</a></li>
+    <!-- <li><a href="#pricing" class="nav-cta">Get started</a></li> HIDDEN FOR LAUNCH -->
   </ul>
 
   <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Menu">
@@ -1295,8 +1448,8 @@
   <ul class="mobile-menu" id="mobileMenu">
     <li><a href="#trending" class="nav-trending" onclick="toggleMenu()">Trending Values</a></li>
     <li><a href="#how" onclick="toggleMenu()">How it works</a></li>
-    <li><a href="#pricing" onclick="toggleMenu()">Pricing</a></li>
-    <li><a href="#pricing" class="nav-cta" onclick="toggleMenu()">Get started</a></li>
+    <!-- <li><a href="#pricing" onclick="toggleMenu()">Pricing</a></li> HIDDEN FOR LAUNCH -->
+    <!-- <li><a href="#pricing" class="nav-cta" onclick="toggleMenu()">Get started</a></li> HIDDEN FOR LAUNCH -->
   </ul>
 </nav>
 
@@ -1459,12 +1612,7 @@
               <div class="action-divider"></div>
               <div>
                 <div class="action-label">Suggested offer</div>
-                <div class="action-value">
-                  <div class="offer-locked">
-                    <span class="offer-blur-result">$385</span>
-                    <span class="upgrade-pill">Pro</span>
-                  </div>
-                </div>
+                <div class="action-value" id="offerValue">$385</div>
               </div>
             </div>
           </div>
@@ -1661,10 +1809,24 @@
     </div>
   </div>
 
-  <div class="trending-cta">
+  <!-- TRENDING UPGRADE CTA - HIDDEN FOR LAUNCH. Re-enable by removing style="display:none;" -->
+  <div class="trending-cta" style="display:none;">
     <p class="trending-cta-text">Get the <strong>full Trending Values dashboard</strong> with profit margins, seasonal alerts, and best-platform data.</p>
     <button class="trending-upgrade" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Upgrade to Flipper — $29/mo</button>
   </div>
+</section>
+
+<section class="history" id="history">
+  <div class="history-header">
+    <div class="history-title-block">
+      <span class="history-label">📋 Your Recent Scans</span>
+      <h2 class="history-title">Pick up where you left off</h2>
+      <p class="history-sub">Your last 5 scans, saved on this device. Click any card to view the full result again.</p>
+    </div>
+    <button class="history-clear" onclick="clearHistory()">Clear history</button>
+  </div>
+
+  <div class="history-grid" id="historyGrid"></div>
 </section>
 
 <section class="examples" id="examples">
@@ -1719,10 +1881,7 @@
       <div class="card-divider"></div>
       <div class="card-offer">
         <span class="offer-label">Suggested offer</span>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="offer-blur">$310</span>
-          <span class="upgrade-tag">Pro</span>
-        </div>
+        <span class="offer-price">$310</span>
       </div>
     </div>
 
@@ -1757,7 +1916,8 @@
   </div>
 </section>
 
-<section class="pricing" id="pricing">
+<!-- PRICING SECTION - HIDDEN FOR LAUNCH. Re-enable by removing style="display:none;" below -->
+<section class="pricing" id="pricing" style="display:none;">
   <p class="section-label">Pricing</p>
   <h2 class="section-title">Simple, honest pricing</h2>
   <div class="pricing-grid">
@@ -1995,6 +2155,10 @@
     document.getElementById('resultMessage').textContent = result.message;
     document.getElementById('resultConfidence').textContent = result.confidence;
     document.getElementById('recommendationText').textContent = result.recommendation;
+    document.getElementById('offerValue').textContent = result.offer || '—';
+
+    // Save to scan history (localStorage)
+    saveToHistory(result);
 
     // Map verdict to CSS class
     let verdictClass = 'verdict-yellow';
@@ -2084,6 +2248,181 @@
   function toggleMenu() {
     document.getElementById('mobileMenu').classList.toggle('open');
   }
+
+  // SCAN HISTORY — stored in browser localStorage
+  const HISTORY_KEY = 'spotval_scan_history';
+  const HISTORY_LIMIT = 5;
+
+  function getHistory() {
+    try {
+      const data = localStorage.getItem(HISTORY_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function saveToHistory(result) {
+    try {
+      const history = getHistory();
+
+      const entry = {
+        ...result,
+        scannedAt: Date.now()
+      };
+
+      // Add to front, dedupe by listingTitle + listingMeta if exact match
+      const existingIdx = history.findIndex(h =>
+        h.listingTitle === entry.listingTitle && h.listingMeta === entry.listingMeta
+      );
+
+      if (existingIdx !== -1) history.splice(existingIdx, 1);
+
+      history.unshift(entry);
+
+      // Keep only the last N scans
+      const trimmed = history.slice(0, HISTORY_LIMIT);
+
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(trimmed));
+      renderHistory();
+    } catch (err) {
+      console.error('Failed to save history:', err);
+    }
+  }
+
+  function clearHistory() {
+    if (confirm('Clear your scan history? This cannot be undone.')) {
+      localStorage.removeItem(HISTORY_KEY);
+      renderHistory();
+    }
+  }
+
+  function timeAgo(timestamp) {
+    const seconds = Math.floor((Date.now() - timestamp) / 1000);
+    if (seconds < 60) return 'just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days === 1) return 'yesterday';
+    if (days < 7) return `${days}d ago`;
+    const weeks = Math.floor(days / 7);
+    return `${weeks}w ago`;
+  }
+
+  function getVerdictBg(verdict) {
+    if (verdict === 'Great Deal') return { bg: 'rgba(57,224,122,0.12)', color: '#39e07a' };
+    if (verdict === 'Overpriced') return { bg: 'rgba(242,92,92,0.12)', color: '#f25c5c' };
+    return { bg: 'rgba(245,200,66,0.12)', color: '#f5c842' };
+  }
+
+  function renderHistory() {
+    const history = getHistory();
+    const section = document.getElementById('history');
+    const grid = document.getElementById('historyGrid');
+
+    if (history.length === 0) {
+      section.classList.remove('active');
+      return;
+    }
+
+    section.classList.add('active');
+    grid.innerHTML = '';
+
+    history.forEach((entry, idx) => {
+      const verdictStyle = getVerdictBg(entry.verdict);
+      const card = document.createElement('div');
+      card.className = 'history-card';
+      card.onclick = () => viewHistoryItem(idx);
+
+      const safeTitle = (entry.listingTitle || 'Listing').replace(/</g, '&lt;');
+      const safeMeta = (entry.listingMeta || '').replace(/</g, '&lt;');
+      const verdict = entry.verdict || 'Fair Deal';
+      const score = entry.score || 0;
+      const time = timeAgo(entry.scannedAt);
+
+      card.innerHTML = `
+        <div class="history-card-header">
+          <div class="history-card-info">
+            <div class="history-card-title">${safeTitle}</div>
+            <div class="history-card-meta">${safeMeta}</div>
+          </div>
+          <div class="history-card-score" style="background:${verdictStyle.bg};color:${verdictStyle.color}">${score}</div>
+        </div>
+        <div class="history-card-footer">
+          <span class="history-card-verdict" style="background:${verdictStyle.bg};color:${verdictStyle.color}">${verdict}</span>
+          <div style="display:flex;align-items:center;gap:0.5rem">
+            <span class="history-card-time">${time}</span>
+            <button class="history-card-view" onclick="event.stopPropagation(); viewHistoryItem(${idx})">View</button>
+          </div>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function viewHistoryItem(idx) {
+    const history = getHistory();
+    const entry = history[idx];
+    if (!entry) return;
+
+    // Scroll to top so user sees the result
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Re-display the result without re-running the scan
+    setTimeout(() => {
+      document.querySelectorAll('.result-verdict, .result-message, .result-confidence, .result-action-card, .result-actions').forEach(el => el.classList.remove('show'));
+      showResultsFromHistory(entry);
+    }, 400);
+  }
+
+  function showResultsFromHistory(result) {
+    // Same as showResults but does NOT save to history again
+    document.getElementById('resultTitle').textContent = result.listingTitle || 'Your listing';
+    document.getElementById('resultMeta').textContent = result.listingMeta || '';
+    document.getElementById('resultMessage').textContent = result.message;
+    document.getElementById('resultConfidence').textContent = result.confidence;
+    document.getElementById('recommendationText').textContent = result.recommendation;
+    document.getElementById('offerValue').textContent = result.offer || '—';
+
+    let verdictClass = 'verdict-yellow';
+    if (result.verdict === 'Great Deal') verdictClass = 'verdict-green';
+    else if (result.verdict === 'Overpriced') verdictClass = 'verdict-red';
+
+    const verdictEl = document.getElementById('resultVerdict');
+    verdictEl.className = 'result-verdict ' + verdictClass;
+    document.getElementById('verdictIcon').textContent = result.verdictIcon || '✓';
+    document.getElementById('verdictText').textContent = result.verdict;
+
+    const ring = document.getElementById('scoreRingFill');
+    const num = document.getElementById('scoreNumber');
+    const color = result.verdictColor || '#39e07a';
+    ring.style.transition = 'none';
+    ring.style.strokeDashoffset = '377';
+    ring.style.stroke = color;
+    num.style.color = color;
+    num.textContent = '0';
+
+    showState('state-result');
+
+    setTimeout(() => {
+      ring.style.transition = 'stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1)';
+      const targetOffset = 377 - (377 * result.score / 100);
+      ring.style.strokeDashoffset = targetOffset;
+      animateCounter(num, 0, result.score, 1800);
+    }, 100);
+
+    setTimeout(() => { document.getElementById('resultVerdict').classList.add('show'); }, 1400);
+    setTimeout(() => { document.getElementById('resultMessage').classList.add('show'); }, 1700);
+    setTimeout(() => { document.getElementById('resultConfidence').classList.add('show'); }, 1900);
+    setTimeout(() => { document.getElementById('resultActionCard').classList.add('show'); }, 2100);
+    setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2300);
+  }
+
+  // Render history on page load
+  document.addEventListener('DOMContentLoaded', renderHistory);
 
   function filterTrending(btn, category) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
