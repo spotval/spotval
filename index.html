@@ -161,6 +161,55 @@
     line-height: 1.7;
   }
 
+  /* SCAN LIMIT INDICATOR */
+  .scan-limit {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 0.5rem 1.1rem;
+    background: rgba(255,255,255,0.02);
+    border: 0.5px solid var(--border);
+    border-radius: 100px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+
+  .scan-limit-pills { display: flex; gap: 4px; }
+
+  .scan-limit-pill {
+    width: 18px;
+    height: 5px;
+    border-radius: 100px;
+    background: var(--bg3);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .scan-limit-pill.filled {
+    background: var(--green);
+    box-shadow: 0 0 6px rgba(57,224,122,0.35);
+  }
+
+  .scan-limit-pill.warning {
+    background: var(--yellow);
+    box-shadow: 0 0 6px rgba(245,200,66,0.35);
+  }
+
+  .scan-limit-text {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2px;
+  }
+
+  .scan-limit.depleted {
+    border-color: rgba(242,92,92,0.25);
+  }
+
+  .scan-limit.depleted .scan-limit-text { color: var(--red); }
+  .scan-limit.depleted .scan-limit-pill { background: rgba(242,92,92,0.15); box-shadow: none; }
+
   /* SCAN STATE STACK */
   .scan-stack {
     width: 100%;
@@ -1562,6 +1611,11 @@
 
     <p class="hero-sub">Any listing. Any platform. Scored in seconds.</p>
 
+    <div class="scan-limit" id="scanLimit">
+      <div class="scan-limit-pills" id="scanLimitPills"></div>
+      <span class="scan-limit-text" id="scanLimitText">5 scans left today</span>
+    </div>
+
     <div class="scan-stack">
 
       <!-- INPUT STATE -->
@@ -2258,10 +2312,16 @@
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+        if (response.status === 429 || typeof errorData.remaining === 'number') {
+          setScanLimit(errorData.remaining ?? 0, errorData.resetAt ?? null);
+        }
         throw new Error(errorData.error || 'Scan failed');
       }
 
       const result = await response.json();
+      if (typeof result.remaining === 'number') {
+        setScanLimit(result.remaining, result.resetAt ?? null);
+      }
       showResults(result);
 
     } catch (error) {
@@ -2407,6 +2467,58 @@
 
   function toggleMenu() {
     document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  // SCAN LIMIT — visual indicator synced with backend remaining count
+  const LIMIT_KEY = 'spotval_daily_scans';
+  const SCAN_LIMIT = 5;
+
+  function getScanLimit() {
+    try {
+      const raw = localStorage.getItem(LIMIT_KEY);
+      if (!raw) return { remaining: SCAN_LIMIT, resetAt: null };
+      const parsed = JSON.parse(raw);
+      if (parsed.resetAt && Date.now() >= parsed.resetAt) {
+        return { remaining: SCAN_LIMIT, resetAt: null };
+      }
+      return { remaining: parsed.remaining ?? SCAN_LIMIT, resetAt: parsed.resetAt };
+    } catch (err) {
+      return { remaining: SCAN_LIMIT, resetAt: null };
+    }
+  }
+
+  function setScanLimit(remaining, resetAt) {
+    try {
+      localStorage.setItem(LIMIT_KEY, JSON.stringify({ remaining, resetAt }));
+    } catch (err) {}
+    renderScanLimit();
+  }
+
+  function renderScanLimit() {
+    const { remaining } = getScanLimit();
+    const pillsEl = document.getElementById('scanLimitPills');
+    const textEl = document.getElementById('scanLimitText');
+    const wrapEl = document.getElementById('scanLimit');
+    if (!pillsEl || !textEl || !wrapEl) return;
+
+    pillsEl.innerHTML = '';
+    for (let i = 0; i < SCAN_LIMIT; i++) {
+      const pill = document.createElement('div');
+      pill.className = 'scan-limit-pill';
+      if (i < remaining) {
+        pill.classList.add(remaining === 1 ? 'warning' : 'filled');
+      }
+      pillsEl.appendChild(pill);
+    }
+
+    wrapEl.classList.toggle('depleted', remaining === 0);
+    if (remaining === 0) {
+      textEl.textContent = 'Daily limit reached — try again tomorrow';
+    } else if (remaining === 1) {
+      textEl.textContent = '1 scan left today';
+    } else {
+      textEl.textContent = `${remaining} scans left today`;
+    }
   }
 
   // SCAN HISTORY — stored in browser localStorage
@@ -2588,8 +2700,11 @@
     setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2500);
   }
 
-  // Render history on page load
-  document.addEventListener('DOMContentLoaded', renderHistory);
+  // Render history and scan-limit bar on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    renderHistory();
+    renderScanLimit();
+  });
 
   function filterTrending(btn, category) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
