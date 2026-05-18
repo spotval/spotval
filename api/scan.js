@@ -2,10 +2,49 @@
 // This file runs on Vercel's servers, not in the user's browser
 // It calls GPT-4.1 via GitHub Models and returns a structured deal score
 
+// Rate limiting: 5 scans per IP per 24h.
+// Note: in-memory state. Resets when Vercel cold-starts a new instance,
+// so the effective limit can be a bit higher under load. Good enough for
+// abuse prevention at current scale; swap for @vercel/kv later if needed.
+const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
+const ipRequests = new Map();
+
+function checkRateLimit(ip) {
+  const now = Date.now();
+  const entry = ipRequests.get(ip);
+
+  if (!entry || now >= entry.resetAt) {
+    ipRequests.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true, resetAt: now + RATE_LIMIT_WINDOW_MS };
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return { allowed: false, resetAt: entry.resetAt };
+  }
+
+  entry.count++;
+  return { allowed: true, resetAt: entry.resetAt };
+}
+
 export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Rate limit by IP
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+          || req.headers['x-real-ip']
+          || 'unknown';
+
+  const limit = checkRateLimit(ip);
+  if (!limit.allowed) {
+    const msLeft = limit.resetAt - Date.now();
+    const hoursLeft = Math.max(1, Math.ceil(msLeft / (1000 * 60 * 60)));
+    return res.status(429).json({
+      error: `Daily scan limit reached (5 per day). Try again in ${hoursLeft} hour${hoursLeft === 1 ? '' : 's'}.`
+    });
   }
 
   try {
