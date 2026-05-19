@@ -2600,6 +2600,14 @@
     return { bg: 'rgba(245,200,66,0.12)', color: '#f5c842' };
   }
 
+  // Escape all five HTML-significant characters so user-derived strings
+  // can never be parsed as HTML when injected via innerHTML.
+  function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
   function renderHistory() {
     const history = getHistory();
     const section = document.getElementById('history');
@@ -2619,11 +2627,11 @@
       card.className = 'history-card';
       card.onclick = () => viewHistoryItem(idx);
 
-      const safeTitle = (entry.listingTitle || 'Listing').replace(/</g, '&lt;');
-      const safeMeta = (entry.listingMeta || '').replace(/</g, '&lt;');
-      const verdict = entry.verdict || 'Fair Deal';
-      const score = entry.score || 0;
-      const time = timeAgo(entry.scannedAt);
+      const safeTitle = escapeHTML(entry.listingTitle || 'Listing');
+      const safeMeta = escapeHTML(entry.listingMeta || '');
+      const safeVerdict = escapeHTML(entry.verdict || 'Fair Deal');
+      const safeScore = Number(entry.score) || 0;
+      const safeTime = escapeHTML(timeAgo(entry.scannedAt));
 
       card.innerHTML = `
         <div class="history-card-header">
@@ -2631,12 +2639,12 @@
             <div class="history-card-title">${safeTitle}</div>
             <div class="history-card-meta">${safeMeta}</div>
           </div>
-          <div class="history-card-score" style="background:${verdictStyle.bg};color:${verdictStyle.color}">${score}</div>
+          <div class="history-card-score" style="background:${verdictStyle.bg};color:${verdictStyle.color}">${safeScore}</div>
         </div>
         <div class="history-card-footer">
-          <span class="history-card-verdict" style="background:${verdictStyle.bg};color:${verdictStyle.color}">${verdict}</span>
+          <span class="history-card-verdict" style="background:${verdictStyle.bg};color:${verdictStyle.color}">${safeVerdict}</span>
           <div style="display:flex;align-items:center;gap:0.5rem">
-            <span class="history-card-time">${time}</span>
+            <span class="history-card-time">${safeTime}</span>
             <button class="history-card-view" onclick="event.stopPropagation(); viewHistoryItem(${idx})">View</button>
           </div>
         </div>
