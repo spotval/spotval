@@ -2,6 +2,15 @@
 // This file runs on Vercel's servers, not in the user's browser
 // It calls GPT-4.1 via GitHub Models and returns a structured deal score
 
+// CORS: which origins are allowed to call this API.
+// Requests with no Origin header (server-side scripts, Postman, etc.) are allowed
+// — the rate limit caps damage from those. Requests with an explicit Origin must
+// be in this list or they're rejected with 403.
+const ALLOWED_ORIGINS = [
+  'https://spotval.vercel.app',
+  'http://localhost:3000'  // for local development; safe to remove if unused
+];
+
 // Rate limiting: 5 scans per IP per 24h.
 // Note: in-memory state. Resets when Vercel cold-starts a new instance,
 // so the effective limit can be a bit higher under load. Good enough for
@@ -29,6 +38,23 @@ function checkRateLimit(ip) {
 }
 
 export default async function handler(req, res) {
+  // CORS: reject explicit origins not in the allow list; set permissive
+  // headers for allowed origins; reply to preflight (OPTIONS) requests.
+  const origin = req.headers.origin;
+  if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Max-Age', '86400');
+    return res.status(204).end();
+  }
+
   // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -173,4 +199,3 @@ Return ONLY valid JSON. No markdown, no code fences, no extra text.`;
     });
   }
 }
-
