@@ -23,7 +23,7 @@
     --text-muted: #555;
   }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
 
   body {
     background: var(--bg);
@@ -568,8 +568,14 @@
   .analyzing-step {
     font-size: 0.85rem;
     color: var(--text-dim);
-    min-height: 1.5em;
-    transition: opacity 0.3s;
+    min-height: 2.4em;
+    line-height: 1.4;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 0.5rem;
   }
 
   .analyzing-progress {
