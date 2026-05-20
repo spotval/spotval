@@ -1674,7 +1674,7 @@
     <!-- <li><a href="#pricing" class="nav-cta">Get started</a></li> HIDDEN FOR LAUNCH -->
   </ul>
 
-  <button class="mobile-menu-btn" onclick="toggleMenu()" aria-label="Menu">
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
       <line x1="3" y1="6" x2="21" y2="6"/>
       <line x1="3" y1="12" x2="21" y2="12"/>
@@ -1683,10 +1683,10 @@
   </button>
 
   <ul class="mobile-menu" id="mobileMenu">
-    <li><a href="#trending" class="nav-trending" onclick="toggleMenu()">Trending Values</a></li>
-    <li><a href="#how" onclick="toggleMenu()">How it works</a></li>
-    <!-- <li><a href="#pricing" onclick="toggleMenu()">Pricing</a></li> HIDDEN FOR LAUNCH -->
-    <!-- <li><a href="#pricing" class="nav-cta" onclick="toggleMenu()">Get started</a></li> HIDDEN FOR LAUNCH -->
+    <li><a href="#trending" class="nav-trending mobile-menu-link">Trending Values</a></li>
+    <li><a href="#how" class="mobile-menu-link">How it works</a></li>
+    <!-- <li><a href="#pricing" class="mobile-menu-link">Pricing</a></li> HIDDEN FOR LAUNCH -->
+    <!-- <li><a href="#pricing" class="nav-cta mobile-menu-link">Get started</a></li> HIDDEN FOR LAUNCH -->
   </ul>
 </nav>
 
@@ -1698,7 +1698,7 @@
     <line x1="12" y1="16" x2="12.01" y2="16"/>
   </svg>
   <span class="error-toast-text" id="errorToastText">Something went wrong.</span>
-  <button class="error-toast-close" onclick="hideErrorToast()" aria-label="Dismiss error">
+  <button class="error-toast-close" id="errorToastClose" aria-label="Dismiss error">
     <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
       <line x1="1" y1="1" x2="13" y2="13"/>
       <line x1="13" y1="1" x2="1" y2="13"/>
@@ -1728,8 +1728,8 @@
       <div class="scan-state active" id="state-input">
         <div class="scan-container">
           <div class="scan-tabs">
-            <button class="scan-tab active" onclick="switchTab(this,'text')">Paste listing text<span class="tab-recommended">(Recommended for Facebook Marketplace)</span></button>
-            <button class="scan-tab disabled" onclick="return false;" title="URL scanning coming soon">Paste URL<span class="tab-soon">Soon</span></button>
+            <button class="scan-tab active" data-tab="text">Paste listing text<span class="tab-recommended">(Recommended for Facebook Marketplace)</span></button>
+            <button class="scan-tab disabled" data-tab="url" title="URL scanning coming soon">Paste URL<span class="tab-soon">Soon</span></button>
           </div>
           <!-- URL INPUT MODE -->
           <div id="urlInputMode" style="display:none;">
@@ -1756,18 +1756,18 @@
                 <div class="form-group">
                   <label class="form-label">Condition</label>
                   <div class="dropdown">
-                    <button type="button" class="dropdown-trigger placeholder" id="conditionTrigger" onclick="toggleDropdown(event)">
+                    <button type="button" class="dropdown-trigger placeholder" id="conditionTrigger">
                       <span id="conditionLabel">Select condition</span>
                       <svg class="dropdown-arrow" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                         <polyline points="3 4.5 6 7.5 9 4.5"/>
                       </svg>
                     </button>
                     <div class="dropdown-menu" id="conditionMenu">
-                      <div class="dropdown-option" onclick="selectCondition('New')">New</div>
-                      <div class="dropdown-option" onclick="selectCondition('Used - Like New')">Used - Like New</div>
-                      <div class="dropdown-option" onclick="selectCondition('Used - Good')">Used - Good</div>
-                      <div class="dropdown-option" onclick="selectCondition('Used - Fair')">Used - Fair</div>
-                      <div class="dropdown-option" onclick="selectCondition('Unknown')">Unknown</div>
+                      <div class="dropdown-option" data-value="New">New</div>
+                      <div class="dropdown-option" data-value="Used - Like New">Used - Like New</div>
+                      <div class="dropdown-option" data-value="Used - Good">Used - Good</div>
+                      <div class="dropdown-option" data-value="Used - Fair">Used - Fair</div>
+                      <div class="dropdown-option" data-value="Unknown">Unknown</div>
                     </div>
                   </div>
                 </div>
@@ -1791,7 +1791,7 @@
 
           <div class="scan-footer">
             <span class="scan-hint">5 free scans per day — no account required</span>
-            <button class="scan-btn" id="scanBtn" onclick="handleScan()">
+            <button class="scan-btn" id="scanBtn">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                 <circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/>
               </svg>
@@ -1827,7 +1827,7 @@
               <div class="result-listing-title" id="resultTitle">iPhone 13 Pro — 128GB — Good Condition</div>
               <div class="result-listing-meta" id="resultMeta">Facebook Marketplace · Listed at $420</div>
             </div>
-            <button class="result-close" onclick="resetScan()" aria-label="Close">
+            <button class="result-close" id="resultCloseBtn" aria-label="Close">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                 <line x1="1" y1="1" x2="13" y2="13"/>
                 <line x1="13" y1="1" x2="1" y2="13"/>
@@ -1883,7 +1883,7 @@
                 </svg>
                 Suggested response
               </span>
-              <button class="message-copy-btn" id="messageCopyBtn" onclick="copyMessage()">
+              <button class="message-copy-btn" id="messageCopyBtn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                   <rect x="9" y="9" width="13" height="13" rx="2"/>
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
@@ -1900,7 +1900,7 @@
           </div>
 
           <div class="result-actions" id="resultActions">
-            <button class="result-btn" onclick="resetScan()">
+            <button class="result-btn" id="scanAnotherBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                 <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
                 <path d="M21 3v5h-5"/>
@@ -1941,11 +1941,11 @@
       <p class="trending-sub">Items moving fast across major platforms with strong profit potential. Updated daily.</p>
     </div>
     <div class="trending-filters">
-      <button class="filter-btn active" onclick="filterTrending(this,'all')">All</button>
-      <button class="filter-btn" onclick="filterTrending(this,'electronics')">Electronics</button>
-      <button class="filter-btn" onclick="filterTrending(this,'apparel')">Apparel</button>
-      <button class="filter-btn" onclick="filterTrending(this,'furniture')">Furniture</button>
-      <button class="filter-btn" onclick="filterTrending(this,'collectibles')">Collectibles</button>
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="electronics">Electronics</button>
+      <button class="filter-btn" data-category="apparel">Apparel</button>
+      <button class="filter-btn" data-category="furniture">Furniture</button>
+      <button class="filter-btn" data-category="collectibles">Collectibles</button>
     </div>
   </div>
 
@@ -2094,7 +2094,7 @@
   <!-- TRENDING UPGRADE CTA - HIDDEN FOR LAUNCH. Re-enable by removing style="display:none;" -->
   <div class="trending-cta" style="display:none;">
     <p class="trending-cta-text">Get the <strong>full Trending Values dashboard</strong> with profit margins, seasonal alerts, and best-platform data.</p>
-    <button class="trending-upgrade" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">Upgrade to Flipper — $29/mo</button>
+    <button class="trending-upgrade" id="trendingUpgradeBtn">Upgrade to Flipper — $29/mo</button>
   </div>
 </section>
 
@@ -2105,7 +2105,7 @@
       <h2 class="history-title">Pick up where you left off</h2>
       <p class="history-sub">Your last 5 scans, saved on this device. Click any card to view the full result again.</p>
     </div>
-    <button class="history-clear" onclick="clearHistory()">Clear history</button>
+    <button class="history-clear" id="historyClearBtn">Clear history</button>
   </div>
 
   <div class="history-grid" id="historyGrid"></div>
@@ -2760,10 +2760,15 @@
           <span class="history-card-verdict" style="background:${verdictStyle.bg};color:${verdictStyle.color}">${safeVerdict}</span>
           <div style="display:flex;align-items:center;gap:0.5rem">
             <span class="history-card-time">${safeTime}</span>
-            <button class="history-card-view" onclick="event.stopPropagation(); viewHistoryItem(${idx})">View</button>
+            <button class="history-card-view" data-history-idx="${idx}">View</button>
           </div>
         </div>
       `;
+
+      card.querySelector('.history-card-view').addEventListener('click', (e) => {
+        e.stopPropagation();
+        viewHistoryItem(idx);
+      });
 
       grid.appendChild(card);
     });
@@ -2834,8 +2839,60 @@
     setTimeout(() => { document.getElementById('resultActions').classList.add('show'); }, 2500);
   }
 
-  // Render history and scan-limit bar on page load
+  // Attach all click handlers to their target elements.
+  // Centralized so we can keep inline onclick="" out of the HTML — this
+  // lets us tighten the Content-Security-Policy script-src directive later.
+  function wireUpEventListeners() {
+    // Mobile nav
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleMenu);
+    document.querySelectorAll('.mobile-menu-link').forEach(link => {
+      link.addEventListener('click', toggleMenu);
+    });
+
+    // Error toast close
+    document.getElementById('errorToastClose')?.addEventListener('click', hideErrorToast);
+
+    // Scan tabs (ignore the disabled URL tab)
+    document.querySelectorAll('.scan-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('disabled')) return;
+        switchTab(btn, btn.dataset.tab);
+      });
+    });
+
+    // Condition dropdown
+    document.getElementById('conditionTrigger')?.addEventListener('click', toggleDropdown);
+    document.querySelectorAll('#conditionMenu .dropdown-option').forEach(opt => {
+      opt.addEventListener('click', () => selectCondition(opt.dataset.value));
+    });
+
+    // Scan button
+    document.getElementById('scanBtn')?.addEventListener('click', handleScan);
+
+    // Result close + scan-another both reset
+    document.getElementById('resultCloseBtn')?.addEventListener('click', resetScan);
+    document.getElementById('scanAnotherBtn')?.addEventListener('click', resetScan);
+
+    // Copy suggested message
+    document.getElementById('messageCopyBtn')?.addEventListener('click', copyMessage);
+
+    // Trending filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => filterTrending(btn, btn.dataset.category));
+    });
+
+    // Trending upgrade CTA (currently hidden; wired for when it's re-enabled)
+    document.getElementById('trendingUpgradeBtn')?.addEventListener('click', () => {
+      document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // History clear
+    document.getElementById('historyClearBtn')?.addEventListener('click', clearHistory);
+  }
+
+  // Wire listeners, render history and scan-limit bar on page load
   document.addEventListener('DOMContentLoaded', () => {
+    wireUpEventListeners();
     renderHistory();
     renderScanLimit();
   });
